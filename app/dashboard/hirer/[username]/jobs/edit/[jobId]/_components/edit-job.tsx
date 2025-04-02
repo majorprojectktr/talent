@@ -94,6 +94,7 @@ export const EditJob = ({ id }: EditJobProps) => {
     if (job && data === undefined) {
       setData(job);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job]);
 
   if (!job || !data || !currentUser) return <div>Loading...</div>;
