@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const create = mutation({
   args: {
@@ -70,7 +71,7 @@ export const get = query({
         const job = await ctx.db.get(application.jobId);
         return {
           ...application,
-          job
+          job,
         };
       })
     );
@@ -96,5 +97,158 @@ export const getApplicationById = query({
     }
 
     return application;
+  },
+});
+
+export const getApplicationsByJobId = query({
+  args: {
+    jobId: v.id("jobs"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const applications = await ctx.db
+      .query("applications")
+      .withIndex("by_jobId", (q) => q.eq("jobId", args.jobId))
+      .collect();
+
+    if (!applications) {
+      throw new Error("No Applications Found!");
+    }
+
+    let applicationsWithApplicantsRelation = applications;
+
+    applicationsWithApplicantsRelation = await Promise.all(
+      applications.map(async (application) => {
+        const applicationMedia = await ctx.db
+          .query("applicationMedia")
+          .withIndex("by_applicationId", (q) =>
+            q.eq("applicationId", application._id)
+          )
+          .unique();
+
+        const url = await ctx.runQuery(internal.applicationMedia.getMediaUrl, {
+          storageId: applicationMedia?.storageId,
+        });
+
+        const applicant = await ctx.db
+          .query("users")
+          .withIndex("by_id", (q) => q.eq("_id", application.freelancerId))
+          .unique();
+
+        return {
+          ...application,
+          applicationMedia: { ...applicationMedia, url },
+          applicant,
+        };
+      })
+    );
+
+    return applicationsWithApplicantsRelation;
+  },
+});
+
+export const getApplicationsByJobIdAndFreelancerId = query({
+  args: {
+    jobId: v.id("jobs"),
+    applicantId: v.id("users"),
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: async (ctx, args): Promise<any> => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.db.get(args.applicantId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const application = await ctx.db
+      .query("applications")
+      .withIndex("by_jobId_freelancerId", (q) =>
+        q.eq("jobId", args.jobId).eq("freelancerId", args.applicantId)
+      )
+      .unique();
+
+    if (!application) {
+      throw new Error("No Application Found!");
+    }
+
+    const applicationMedia = await ctx.db
+      .query("applicationMedia")
+      .withIndex("by_applicationId", (q) =>
+        q.eq("applicationId", application._id)
+      )
+      .unique();
+
+    const url: string | null = await ctx.runQuery(
+      internal.applicationMedia.getMediaUrl,
+      {
+        storageId: applicationMedia?.storageId,
+      }
+    );
+
+    return {
+      ...application,
+      applicationMedia: { ...applicationMedia, url },
+      user,
+    };
+  },
+});
+
+export const updateApplication = mutation({
+  args: {
+    applicationId: v.id("applications"),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("accepted"),
+      v.literal("rejected"),
+      v.literal("completed")
+    ), // "open", "in_progress", "completed", "cancelled"
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.tokenIdentifier))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.role === "freelancer") {
+      throw new Error("Unauthorized");
+    }
+
+    const application = await ctx.db.get(args.applicationId);
+
+    if (!application) {
+      throw new Error("Application not found");
+    }
+
+    await ctx.db.patch(args.applicationId, {
+      status: args.status,
+    });
+
+    if (args.status === "accepted") {
+      await ctx.runMutation(internal.jobs.updateApplicant, {
+        jobId: application.jobId,
+        applicationtId: args.applicationId,
+        status: "in_progress",
+      });
+    }
+    
+    return args.applicationId;
   },
 });

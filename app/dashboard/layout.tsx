@@ -23,10 +23,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {breadcrumbs.slice(0, breadcrumbs.length).map((item, index) => {
             if (index === 0) return null;
             return (
-              <div key={index} className="flex items-center gap-3">
+              <div key={index} className="flex items-center gap-1">
                 <BreadcrumbItem
                   key={index}
-                  className="text-black text-sm font-normal capitalize"
+                  className={`text-sm font-normal capitalize ${index === breadcrumbs.length - 1 ? "text-[#3E5879]" : "text-[#213555] "}`}
                 >
                   {item.length > 15 ? item.slice(0, 15) + "..." : item}
                 </BreadcrumbItem>

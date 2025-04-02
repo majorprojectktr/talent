@@ -1,13 +1,17 @@
-import { clsx, type ClassValue } from "clsx"
+import { clsx, type ClassValue } from "clsx";
 import { toast } from "sonner";
-import { twMerge } from "tailwind-merge"
+import { twMerge } from "tailwind-merge";
 import { Doc } from "@/convex/_generated/dataModel";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export const handleNavigation = (currentUser: Doc<"users">, url: string, push: (url: string) => void) => {
+export const handleNavigation = (
+  currentUser: Doc<"users">,
+  url: string,
+  push: (url: string) => void
+) => {
   if (!currentUser) {
     toast.error("please login to continue");
     return;
@@ -20,15 +24,27 @@ export function formatDateTime(dateTimeString: string): {
   time: string;
 } {
   const months = [
-    "January", "February", "March", "April", "May", "June", "July",
-    "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   // Create a Date object from the input string in UTC
   const dateObj = new Date(dateTimeString);
 
   // Convert to local time
-  const localDate = new Date(dateObj.getTime() - dateObj.getTimezoneOffset() * 60000);
+  const localDate = new Date(
+    dateObj.getTime() - dateObj.getTimezoneOffset() * 60000
+  );
 
   // Get local time components
   const day = localDate.getDate();
@@ -45,12 +61,11 @@ export function formatDateTime(dateTimeString: string): {
 }
 
 function formatTime(hours: number, minutes: number): string {
-  const period = hours >= 12 ? 'PM' : 'AM';
+  const period = hours >= 12 ? "PM" : "AM";
   const hour12 = hours % 12 || 12;
-  const formattedTime = `${hour12}:${minutes < 10 ? '0' : ''}${minutes} ${period}`;
+  const formattedTime = `${hour12}:${minutes < 10 ? "0" : ""}${minutes} ${period}`;
   return formattedTime;
 }
-
 
 export function formatNumberWithCommas(number: number): string {
   if (number === 0) {
@@ -59,3 +74,6 @@ export function formatNumberWithCommas(number: number): string {
   const formattedNumber = number.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
   return formattedNumber;
 }
+export const truncateText = (text: string, maxLength: number = 50) => {
+  return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+};

@@ -33,6 +33,7 @@ export const store = mutation({
       username: identity.nickname!,
       profileImageUrl: identity.profileUrl,
       isActive: true,
+      balance: 0,
     });
 
     return userId;
@@ -78,3 +79,16 @@ export const getUserByUsername = query({
     return user;
   },
 });
+
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorised");
+    }
+    const user = await ctx.db.get(args.userId);
+    return user;
+  },
+});
+

@@ -4,8 +4,12 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Usable, use } from "react";
 
+import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Listing } from "./_components/listing";
+import { useQuery } from "convex/react";
+import { useRouter } from "next/navigation";
+import { JobListing } from "./_components/job-listing";
 
 interface Params {
   username: string;
@@ -20,33 +24,47 @@ const JobDetails = ({ params }: JobDetailsProps) => {
   const unWrappedParams = use(params);
   const jobId = unWrappedParams.jobId as Id<"jobs">;
 
+  const applications = useQuery(api.applications.get, {});
+  const currentUser = useQuery(api.users.getCurrentUser);
+  const submittedApplication = applications?.find(
+    (application) => application.freelancerId === currentUser?._id
+  );
+
+  const router = useRouter();
+
   return (
     <div className="relative w-full h-fit max-w-2xl mx-auto p-4 space-y-2 border-2 rounded-xl">
-      <Link href={`/dashboard/freelancer/${unWrappedParams.username}/jobs`}>
+      <div className="flex items-center justify-between">
         <Button
           variant={"outline"}
-          className="capitalize absolute top-6 left-4 cursor-pointer"
+          className="capitalize cursor-pointer"
+          onClick={() => router.back()}
         >
           <ArrowLeft size={20} color="black" />
         </Button>
-      </Link>
 
-      <div className="w-fit mx-auto text-2xl md:text-4xl font-bold text-black leading-tight">
-        Job Details
+        <div className="w-fit mx-auto text-2xl font-bold text-black leading-tight">
+          Job Details
+        </div>
+
+        {submittedApplication ? (
+          <Button variant={"sec"} className="capitalize cursor-pointer">
+            Applied
+          </Button>
+        ) : (
+          <Link
+            href={`/dashboard/freelancer/${unWrappedParams.username}/jobs/apply/${jobId}`}
+          >
+            <Button variant={"prime"} className="capitalize cursor-pointer">
+              Apply
+            </Button>
+          </Link>
+        )}
       </div>
 
-      <Link
-        href={`/dashboard/freelancer/${unWrappedParams.username}/jobs/apply/${jobId}`}
-      >
-        <Button
-          variant={"prime"}
-          className="capitalize absolute top-6 right-4 cursor-pointer"
-        >
-          Apply
-        </Button>
-      </Link>
+      <Separator />
 
-      <Listing jobId={jobId} />
+      <JobListing jobId={jobId} />
     </div>
   );
 };

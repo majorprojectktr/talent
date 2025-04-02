@@ -1,3 +1,5 @@
+import { Doc } from "@/convex/_generated/dataModel";
+
 export interface Job {
   createdAt: number;
   id: string;
@@ -21,3 +23,7 @@ export interface Application {
 }
 
 export type ApplicationWithJob = Application & Partial<Job>;
+
+export type ImageWithUrlType = Doc<"jobMedia"> & {
+  url: string
+};

@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 const isPublicRoute = createRouteMatcher(['/'])
 
 export default clerkMiddleware(async (auth, req) => {
+
   if (!isPublicRoute(req)) {
     await auth.protect()
   }
@@ -15,6 +16,8 @@ export default clerkMiddleware(async (auth, req) => {
     if (userId) {
       return NextResponse.redirect(new URL('/dashboard', req.url))
     }
+
+    
   }
 })
 

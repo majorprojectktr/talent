@@ -1,27 +1,27 @@
 import { v } from "convex/values";
-import { internalQuery, mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
 });
 
-export const sendDocument = mutation({
-    args: { storageId: v.id("_storage"), format: v.string(), applicationId: v.id("applications")},
+export const sendImage = mutation({
+    args: { storageId: v.id("_storage"), format: v.string(), jobId: v.id("jobs") },
     handler: async (ctx, args) => {
         // check how many images are already uploaded
-        const applicationMedia = await ctx.db
-            .query("applicationMedia")
-            .withIndex("by_applicationId", (q) => q.eq("applicationId", args.applicationId))
+        const jobMedia = await ctx.db
+            .query("jobMedia")
+            .withIndex("by_jobId", (q) => q.eq("jobId", args.jobId))
             .collect();
 
-        if (applicationMedia.length >= 1) {
-            throw new Error("You can upload up to 1 media files.");
+        if (jobMedia.length >= 5) {
+            throw new Error("You can upload up to 5 media files. Please delete a media file before uploading a new one.");
         }
 
-        await ctx.db.insert("applicationMedia", {
+        await ctx.db.insert("jobMedia", {
             storageId: args.storageId,
             format: args.format,
-            applicationId: args.applicationId,
+            jobId: args.jobId
         });
     },
 });
@@ -29,7 +29,7 @@ export const sendDocument = mutation({
 export const remove = mutation({
     args: { storageId: v.id("_storage") },
     handler: async (ctx, args) => {
-        const media = await ctx.db.query("applicationMedia")
+        const media = await ctx.db.query("jobMedia")
             .withIndex("by_storageId", (q) => q.eq("storageId", args.storageId))
             .unique();
 
@@ -44,7 +44,7 @@ export const remove = mutation({
 });
 
 
-export const getMediaUrl = internalQuery({
+export const getMediaUrl = query({
     args: { storageId: v.optional(v.id("_storage")) },
     handler: async (ctx, args) => {
         if (!args.storageId) return null;

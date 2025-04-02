@@ -1,5 +1,3 @@
-import { Parkinsans } from "next/font/google";
-import React from "react";
 import {
   SignInButton,
   SignUpButton,
@@ -7,14 +5,18 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { Parkinsans } from "next/font/google";
+import Link from "next/link";
+import { DepositFund } from "./deposit-fund";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
-import Link from "next/link";
 
 const parkinsans = Parkinsans({ subsets: ["latin"] });
 
 const Appbar = () => {
+
+
   return (
     <>
       <nav className="flex justify-between items-center p-4 gap-4 h-12">
@@ -27,7 +29,8 @@ const Appbar = () => {
           </Label>
         </Link>
 
-        <div>
+        <div className="flex items-center gap-4">
+          <DepositFund/>
           <SignedOut>
             <Button variant="ghost" asChild>
               <SignInButton mode="modal" />

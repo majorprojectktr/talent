@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, truncateText } from "@/lib/utils";
 import { Job } from "@/types";
 import { useQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
@@ -26,9 +26,7 @@ const JobCard = ({
   status,
 }: Job) => {
   const createdAtLabel = formatDistanceToNow(createdAt, { addSuffix: true });
-  const truncateText = (text: string, maxLength: number = 50) => {
-    return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
-  };
+
   const currentUser = useQuery(api.users.getCurrentUser);
   const pathname = usePathname()
   const redirectUrl = pathname.includes("freelancer" ) ? `/dashboard/freelancer/${currentUser?.username}/jobs/${id}` : `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;

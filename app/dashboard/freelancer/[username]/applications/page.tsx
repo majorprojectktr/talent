@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { DataTable } from "./_components/data-table";
 import Link from "next/link";
 import { Usable, use } from "react";
+import { ApplicationTable } from "./_components/appication-table";
 
 interface Params {
   username: string;
@@ -29,7 +29,7 @@ const ApplicationsDashboard = ({ params }: ApplicationsDashboardProps) => {
         </Button>
       </div>
       <div className="w-full max-w-7xl mx-auto px-4">
-        <DataTable />
+        <ApplicationTable />
       </div>
     </div>
   );
