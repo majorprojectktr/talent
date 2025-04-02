@@ -103,7 +103,6 @@ export function DepositFund() {
           </Label>
           <Input
             type="number"
-            value={amount}
             className="col-span-3"
             onChange={(e) => setAmount(parseInt(e.target.value))}
           />
