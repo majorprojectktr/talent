@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { formatDateTime, formatNumberWithCommas } from "@/lib/utils";
 import { Job } from "@/types";
@@ -47,20 +48,8 @@ const JobCard = ({
     ? `/dashboard/freelancer/${currentUser?.username}/jobs/${id}`
     : `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
 
-  const { mutate: addBookmark, pending: addBookmarkPending } = useApiMutation(
-    api.jobs.addBookmark
-  );
-
-  const { mutate: removeBookmark, pending: removeBookmarkPending } =
-    useApiMutation(api.jobs.removeBookmark);
-
-  const toggleBookmark = async () => {
-    if (bookmarked) {
-      await removeBookmark({id});
-    } else {
-      await addBookmark({id});
-    }
-  };
+  const { mutate: toggleBookmark, pending: toggleBookmarkPending } = useApiMutation(api.jobs.toggleBookmark);
+  
 
   return (
     <Card className="overflow-hidden relative h-fit min-h-74 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
@@ -69,7 +58,10 @@ const JobCard = ({
           size={20}
           color="#344CB7"
           fill={bookmarked ? "#344CB7" : "none"}
-          onClick={toggleBookmark}
+          onClick={() => {
+            if(toggleBookmarkPending) return;
+            toggleBookmark({id});
+          }}
           className="cursor-pointer"
         />
       </div>
