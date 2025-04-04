@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -19,10 +19,18 @@ import { Button } from "@/components/ui/button";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useRouter } from "next/navigation";
 import AuthLoader from "@/components/auth-loader";
+import { Doc } from "@/convex/_generated/dataModel";
+
+const previewItem: Partial<Doc<"users">> = {
+  username: "sample-username",
+};
 
 const Dashboard = () => {
   const roles = ["freelancer", "hirer"];
   const { push } = useRouter();
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  //fetch current user
   const currentUser = useQuery(api.users.getCurrentUser);
 
   const { mutate, pending } = useApiMutation(api.users.store);
@@ -37,21 +45,22 @@ const Dashboard = () => {
     }
   };
 
-  //update username and profileImageUrl if user already exists
+  //useEffects
   useEffect(() => {
-    const updateUser = async () => {
-      await mutate({});
-    };
-    updateUser();
+    const timer = setTimeout(() => {
+      setInitialLoadComplete(true);
+    }, 3000); // Minimum 3 second loader
+
+    return () => clearTimeout(timer);
   }, []);
 
-  //useEffects
+  //redirect to dashboard page if user already exists
   useEffect(() => {
     if (!currentUser) return;
     push(`dashboard/${currentUser.role}/${currentUser.username}/jobs`);
   }, [currentUser, push]);
 
-  if (currentUser) return <AuthLoader />;
+  if (!initialLoadComplete || currentUser === undefined) return <AuthLoader />;
 
   return (
     <div className="w-full h-96 flex flex-col justify-center items-center gap-y-4">
