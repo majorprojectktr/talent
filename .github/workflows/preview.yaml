@@ -30,6 +30,9 @@ jobs:
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_FORCE_NO_BUILD_CACHE: 1
+          NPM_FLAGS: --legacy-peer-deps
 
       - name: Deploy Project Artifacts
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
