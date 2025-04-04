@@ -56,7 +56,7 @@ const Appbar = () => {
                 <TooltipTrigger>
                   <Link
                     href={{
-                      pathname: `/dashboard/hirer/${currentUser?.username}/jobs`,
+                      pathname: `/dashboard/${currentUser?.role}/${currentUser?.username}/jobs`,
                       query: bookmarks ? {} : { bookmarks: true },
                     }}
                     className="p-0"

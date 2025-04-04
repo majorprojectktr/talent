@@ -4,7 +4,7 @@ import { use } from "react";
 
 interface SearchParams {
   search?: string;
-  favorites?: string;
+  bookmarks?: string;
 }
 
 interface Params {

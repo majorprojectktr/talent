@@ -8,7 +8,7 @@ import { JobsList } from "./jobs-list";
 interface JobsDashboardProps {
   query: {
     search?: string;
-    favorites?: string;
+    bookmarks?: string;
   };
 }
 

@@ -126,13 +126,13 @@ export const remove = mutation({
         return ctx.db.delete(application._id);
       })
     );
-    
+
     // Finally delete the job
     await ctx.db.delete(args.id);
   },
 });
 
-export const addBookmark = mutation({
+export const toggleBookmark = mutation({
   args: { id: v.id("jobs") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -165,59 +165,21 @@ export const addBookmark = mutation({
       )
       .unique();
 
+    // If bookmark exists, delete it; otherwise, create it
     if (bookmark) {
-      throw new Error("Job already bookmarked");
+      await ctx.db.delete(bookmark._id);
+    } else {
+      await ctx.db.insert("userBookmarks", {
+        userId,
+        jobId: job._id,
+      });
     }
 
-    await ctx.db.insert("userBookmarks", {
-      userId,
-      jobId: job._id,
-    });
-
-    return job;
-  },
-});
-
-export const removeBookmark = mutation({
-  args: { id: v.id("jobs") },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Unauthorized");
-    }
-
-    const job = await ctx.db.get(args.id);
-
-    if (!job) {
-      throw new Error("Job not found");
-    }
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.tokenIdentifier))
-      .unique();
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const userId = user._id;
-
-    const bookmark= await ctx.db
-      .query("userBookmarks")
-      .withIndex("by_userId_jobId", (q) =>
-        q.eq("userId", userId).eq("jobId", job._id)
-      )
-      .unique();
-
-    if (!bookmark) {
-      throw new Error("Favorited job not found");
-    }
-
-    await ctx.db.delete(bookmark._id);
-
-    return job;
+    // Return the job along with a boolean indicating if it's now bookmarked
+    return {
+      job,
+      bookmarked: !bookmark,
+    };
   },
 });
 
@@ -247,7 +209,7 @@ export const updateApplicant = internalMutation({
       throw new Error("User not found");
     }
 
-    if (user.role !== "hirer") {      
+    if (user.role !== "hirer") {
       throw new Error("Unauthorized");
     }
 
@@ -277,9 +239,18 @@ export const get = query({
       throw new Error("Unauthorized");
     }
 
-    const title = args.search as string;
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.tokenIdentifier))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     let jobs = [];
+
+    const title = args.search as string;
 
     if (title) {
       jobs = await ctx.db
@@ -287,10 +258,7 @@ export const get = query({
         .withSearchIndex("search_title", (q) => q.search("title", title))
         .collect();
     } else {
-      jobs = await ctx.db
-        .query("jobs")
-        .order("desc")
-        .collect();
+      jobs = await ctx.db.query("jobs").order("desc").collect();
     }
 
     let jobsWithBookmarkRelation = jobs;
@@ -301,7 +269,7 @@ export const get = query({
           return ctx.db
             .query("userBookmarks")
             .withIndex("by_userId_jobId", (q) =>
-              q.eq("userId", job.hirerId).eq("jobId", job._id)
+              q.eq("userId", user._id).eq("jobId", job._id)
             )
             .unique()
             .then((bookmark) => {
