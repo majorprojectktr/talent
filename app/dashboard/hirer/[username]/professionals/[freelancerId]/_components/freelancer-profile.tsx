@@ -20,7 +20,7 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
   });
 
   useEffect(() => {
-    console.log(freelancer, "✅");
+    console.log(freelancer, "✅✅");
   }, [freelancer]);
 
   if (!freelancer) return null;
