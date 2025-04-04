@@ -38,17 +38,6 @@ export const create = mutation({
       deadline: args.deadline,
     });
 
-    //todo this should triggered when hirer approves a job application
-    //escrow transaction
-    // await ctx.runMutation(
-    //   internal.escrow.fundEscrow,
-    //   {
-    //     hirerId: user._id,
-    //     jobId,
-    //     amount: args.budget,
-    //   }
-    // );
-
     return jobId;
   },
 });
@@ -99,16 +88,16 @@ export const remove = mutation({
 
     const userId = user._id;
 
-    // 1. Delete favorites
-    const existingFavorite = await ctx.db
-      .query("userFavorites")
+    // 1. Delete bookmarks
+    const bookmark = await ctx.db
+      .query("userBookmarks")
       .withIndex("by_userId_jobId", (q) =>
         q.eq("userId", userId).eq("jobId", args.id)
       )
       .unique();
 
-    if (existingFavorite) {
-      await ctx.db.delete(existingFavorite._id);
+    if (bookmark) {
+      await ctx.db.delete(bookmark._id);
     }
 
     // 2. Delete job media files
@@ -143,7 +132,7 @@ export const remove = mutation({
   },
 });
 
-export const favorite = mutation({
+export const addBookmark = mutation({
   args: { id: v.id("jobs") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -169,18 +158,18 @@ export const favorite = mutation({
 
     const userId = user._id;
 
-    const existingFavorite = await ctx.db
-      .query("userFavorites")
+    const bookmark = await ctx.db
+      .query("userBookmarks")
       .withIndex("by_userId_jobId", (q) =>
         q.eq("userId", userId).eq("jobId", job._id)
       )
       .unique();
 
-    if (existingFavorite) {
-      throw new Error("Job already favorited");
+    if (bookmark) {
+      throw new Error("Job already bookmarked");
     }
 
-    await ctx.db.insert("userFavorites", {
+    await ctx.db.insert("userBookmarks", {
       userId,
       jobId: job._id,
     });
@@ -189,7 +178,7 @@ export const favorite = mutation({
   },
 });
 
-export const unfavorite = mutation({
+export const removeBookmark = mutation({
   args: { id: v.id("jobs") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -215,18 +204,18 @@ export const unfavorite = mutation({
 
     const userId = user._id;
 
-    const existingFavorite = await ctx.db
-      .query("userFavorites")
+    const bookmark= await ctx.db
+      .query("userBookmarks")
       .withIndex("by_userId_jobId", (q) =>
         q.eq("userId", userId).eq("jobId", job._id)
       )
       .unique();
 
-    if (!existingFavorite) {
+    if (!bookmark) {
       throw new Error("Favorited job not found");
     }
 
-    await ctx.db.delete(existingFavorite._id);
+    await ctx.db.delete(bookmark._id);
 
     return job;
   },
@@ -280,7 +269,7 @@ export const updateApplicant = internalMutation({
 export const get = query({
   args: {
     search: v.optional(v.string()),
-    favorites: v.optional(v.string()),
+    bookmarks: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -300,33 +289,32 @@ export const get = query({
     } else {
       jobs = await ctx.db
         .query("jobs")
-        // .withIndex("by_status", (q) => q.eq("status", "open"))
         .order("desc")
         .collect();
     }
 
-    let jobsWithFavoriteRelation = jobs;
+    let jobsWithBookmarkRelation = jobs;
 
     if (identity !== null) {
-      jobsWithFavoriteRelation = await Promise.all(
+      jobsWithBookmarkRelation = await Promise.all(
         jobs.map(async (job) => {
           return ctx.db
-            .query("userFavorites")
+            .query("userBookmarks")
             .withIndex("by_userId_jobId", (q) =>
               q.eq("userId", job.hirerId).eq("jobId", job._id)
             )
             .unique()
-            .then((favorite) => {
+            .then((bookmark) => {
               return {
                 ...job,
-                favorited: !!favorite,
+                bookmarked: !!bookmark,
               };
             });
         })
       );
     }
 
-    return jobsWithFavoriteRelation;
+    return jobsWithBookmarkRelation;
   },
 });
 

@@ -1,15 +1,18 @@
 import { Doc } from "@/convex/_generated/dataModel";
 
 export interface Job {
+  _id?: string;
+  _creationTime?: number;
   createdAt: number;
   id: string;
   title: string;
   description?: string;
   budget: number;
   deadline: string;
-  requiredSkills: string[];
+  requiredskills: string[];
   status: string;
   hirerId: string;
+  bookmarked: boolean;
 }
 
 export interface Application {
