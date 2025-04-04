@@ -2,15 +2,11 @@
 
 import NavbarLanding from "@/components/appbar-landing";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { api } from "@/convex/_generated/api";
-import { handleNavigation } from "@/lib/utils";
 import curve from "@/public/curve.png";
-import { useQuery } from "convex/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const AppbarLanding = () => {
-  const currentUser = useQuery(api.users.getCurrentUser);
   const { push } = useRouter();
 
   return (
