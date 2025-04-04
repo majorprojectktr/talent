@@ -17,6 +17,7 @@ on:
     push:
         branches:
             - master
+            - development
 
 jobs:
     Deploy-Production:
