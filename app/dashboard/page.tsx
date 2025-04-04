@@ -2,7 +2,7 @@
 
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   AlertDialog,
@@ -19,11 +19,27 @@ import { Button } from "@/components/ui/button";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useRouter } from "next/navigation";
 import AuthLoader from "@/components/auth-loader";
+import { Doc } from "@/convex/_generated/dataModel";
+
+const previewItem : Partial<Doc<"users">> = {
+  username: "sample-username",
+};
 
 const Dashboard = () => {
   const roles = ["freelancer", "hirer"];
   const { push } = useRouter();
+
+  const [data, setData] = useState<Partial<Doc<"users">>>(previewItem);
+
+
+  //fetch current user
   const currentUser = useQuery(api.users.getCurrentUser);
+
+  useEffect(() => {
+    if (currentUser) {
+      setData(currentUser);
+    }
+  }, [currentUser]);
 
   const { mutate, pending } = useApiMutation(api.users.store);
 
@@ -51,7 +67,7 @@ const Dashboard = () => {
     push(`dashboard/${currentUser.role}/${currentUser.username}/jobs`);
   }, [currentUser, push]);
 
-  if (currentUser) return <AuthLoader />;
+  if (data !== null) return <AuthLoader />;
 
   return (
     <div className="w-full h-96 flex flex-col justify-center items-center gap-y-4">
