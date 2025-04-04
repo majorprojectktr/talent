@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Usable, use } from "react";
@@ -10,7 +8,7 @@ interface Params {
 }
 
 interface ApplicationsDashboardProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const ApplicationsDashboard = ({ params }: ApplicationsDashboardProps) => {

@@ -1,5 +1,4 @@
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./_generated/server";
 
 export const create = mutation({
@@ -39,15 +38,16 @@ export const create = mutation({
       deadline: args.deadline,
     });
 
+    //todo this should triggered when hirer approves a job application
     //escrow transaction
-    await ctx.runMutation(
-      internal.escrow.fundEscrow,
-      {
-        hirerId: user._id,
-        jobId,
-        amount: args.budget,
-      }
-    );
+    // await ctx.runMutation(
+    //   internal.escrow.fundEscrow,
+    //   {
+    //     hirerId: user._id,
+    //     jobId,
+    //     amount: args.budget,
+    //   }
+    // );
 
     return jobId;
   },
@@ -134,26 +134,10 @@ export const remove = mutation({
 
     await Promise.all(
       applications.map(async (application) => {
-        const applicationMedias = await ctx.db
-          .query("applicationMedia")
-          .withIndex("by_applicationId", (q) =>
-            q.eq("applicationId", application._id)
-          )
-          .collect();
-
-        await Promise.all(
-          applicationMedias.map(async (media) => {
-            if (media.storageId) {
-              await ctx.storage.delete(media.storageId);
-            }
-            return ctx.db.delete(media._id);
-          })
-        );
-
         return ctx.db.delete(application._id);
       })
     );
-
+    
     // Finally delete the job
     await ctx.db.delete(args.id);
   },
@@ -316,7 +300,7 @@ export const get = query({
     } else {
       jobs = await ctx.db
         .query("jobs")
-        .withIndex("by_status", (q) => q.eq("status", "open"))
+        // .withIndex("by_status", (q) => q.eq("status", "open"))
         .order("desc")
         .collect();
     }

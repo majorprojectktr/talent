@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
+import { formatDateTime } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
 
 import { useEffect, useRef, useState } from "react";
@@ -124,7 +125,7 @@ export const EditJob = ({ id }: EditJobProps) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col space-y-2">
+      <div className="space-y-2">
         <Label className="w-fit">Title</Label>
         <Input
           placeholder="title"
@@ -135,7 +136,7 @@ export const EditJob = ({ id }: EditJobProps) => {
           }}
         />
       </div>
-      <div className="flex flex-col space-y-2">
+      <div className="space-y-2">
         <Label className="w-fit">Description</Label>
         <Textarea
           placeholder="description"
@@ -147,7 +148,7 @@ export const EditJob = ({ id }: EditJobProps) => {
           rows={4}
         />
       </div>
-      <div className="flex flex-col space-y-2">
+      <div className="space-y-2">
         <Label className="w-fit">Budget</Label>
         <Input
           placeholder="budget"
@@ -163,7 +164,7 @@ export const EditJob = ({ id }: EditJobProps) => {
         />
       </div>
 
-      <div className="flex flex-col space-y-2">
+      <div className="space-y-2">
         <Label className="w-fit">Skills</Label>
 
         <Input
@@ -178,8 +179,8 @@ export const EditJob = ({ id }: EditJobProps) => {
           }}
         />
       </div>
-      <div className="flex flex-col space-y-2">
-        <Label className="w-fit">Deadline</Label>
+      <div className="space-y-2">
+        <Label className="w-fit">Deadline: {`${formatDateTime(data.deadline).date}`}</Label>
         <Calendar
           mode="single"
           selected={data.deadline ? new Date(data.deadline) : undefined}

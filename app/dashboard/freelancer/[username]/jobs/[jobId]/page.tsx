@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { Usable, use } from "react";
+import { use } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -11,26 +12,36 @@ import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { JobListing } from "./_components/job-listing";
 
+const statusColors: Record<string, string> = {
+  open: "text-[#27548A]",
+  cancelled: "text-[#F16767]",
+  in_progress: "text-[#D3CA79]",
+  completed: "text-[#5F8B4C]",
+};
+
 interface Params {
   username: string;
   jobId: string;
 }
 
 interface JobDetailsProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const JobDetails = ({ params }: JobDetailsProps) => {
   const unWrappedParams = use(params);
-  const jobId = unWrappedParams.jobId as Id<"jobs">;
-
-  const applications = useQuery(api.applications.get, {});
   const currentUser = useQuery(api.users.getCurrentUser);
-  const submittedApplication = applications?.find(
-    (application) => application.freelancerId === currentUser?._id
-  );
+  const jobId = unWrappedParams.jobId as Id<"jobs">;
+  const job = useQuery(api.jobs.getJobsById, { jobId });
+
+  const application = useQuery(api.applications.getApplicationByJobIdAndFreelancerId, {
+    jobId,
+    applicantId: currentUser?._id as Id<"users">,
+  });
 
   const router = useRouter();
+
+  if(!job) return null;
 
   return (
     <div className="relative w-full h-fit max-w-2xl mx-auto p-4 space-y-2 border-2 rounded-xl">
@@ -47,7 +58,11 @@ const JobDetails = ({ params }: JobDetailsProps) => {
           Job Details
         </div>
 
-        {submittedApplication ? (
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className={`capitalize ${statusColors[job.status] || "text-black"}`}>
+            {job.status === "in_progress" ? "In Progress" : job.status}
+          </Badge>
+        {application ? (
           <Button variant={"sec"} className="capitalize cursor-pointer">
             Applied
           </Button>
@@ -60,6 +75,8 @@ const JobDetails = ({ params }: JobDetailsProps) => {
             </Button>
           </Link>
         )}
+        </div>
+
       </div>
 
       <Separator />

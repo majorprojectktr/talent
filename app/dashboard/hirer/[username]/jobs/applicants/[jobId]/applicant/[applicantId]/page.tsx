@@ -29,7 +29,7 @@ interface Params {
 }
 
 interface ApplicantsProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const Applicant = ({ params }: ApplicantsProps) => {
@@ -37,7 +37,7 @@ const Applicant = ({ params }: ApplicantsProps) => {
   const idAppliant = unWrappedParams.applicantId as Id<"users">;
   const idJob = unWrappedParams.jobId as Id<"jobs">;
   const applicant = useQuery(
-    api.applications.getApplicationsByJobIdAndFreelancerId,
+    api.applications.getApplicationByJobIdAndFreelancerId,
     { jobId: idJob, applicantId: idAppliant }
   );
   const updateApplication = useMutation(api.applications.updateApplication);

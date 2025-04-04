@@ -1,24 +1,34 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Usable, use } from "react";
-import { CreateForm } from "./_components/create-form";
+
 import { Separator } from "@/components/ui/separator";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { useRouter } from "next/navigation";
+import { FreelancerProfile } from "./_components/freelancer-profile";
 
-type Params = {
+
+interface Params {
   username: string;
-};
+  freelancerId: string;
+}
 
-interface CreateJobProps {
+interface JobDetailsProps {
   params: Promise<Params>;
 }
 
-const CreateJob = ({ params }: CreateJobProps) => {
+const ProfessionalProfile = ({ params }: JobDetailsProps) => {
   const unWrappedParams = use(params);
+  const currentUser = useQuery(api.users.getCurrentUser);
+
   const router = useRouter();
+
+  if (!currentUser) return null;
+
   return (
-    <div className="w-full h-fit max-w-2xl mx-auto p-4 space-y-2 border-2 rounded-xl">
+    <div className="relative w-full h-fit max-w-4xl mx-auto p-4 space-y-2 border-2 rounded-xl">
       <div className="flex items-center justify-between">
         <Button
           variant={"outline"}
@@ -29,17 +39,19 @@ const CreateJob = ({ params }: CreateJobProps) => {
         </Button>
 
         <div className="w-fit mx-auto text-2xl font-bold text-black leading-tight">
-          Create Job
+          Freelancer Profile
         </div>
+
         <Button variant={"prime"} className="capitalize cursor-pointer">
-          Applied
+          Portfolio
         </Button>
       </div>
 
       <Separator />
-      <CreateForm username={unWrappedParams.username} />
+
+      <FreelancerProfile freelancerId={unWrappedParams.freelancerId} />
     </div>
   );
 };
 
-export default CreateJob;
+export default ProfessionalProfile;

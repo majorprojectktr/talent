@@ -29,7 +29,7 @@ interface Params {
 }
 
 interface JobProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const Edit = ({ params }: JobProps) => {

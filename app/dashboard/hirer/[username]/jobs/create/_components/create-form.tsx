@@ -53,7 +53,7 @@ const CreateFormSchema = z.object({
     .max(10000, {
       message: "Budget must not be longer than 10000.",
     }),
-  requiredskills: z.array(z.string()),
+  requiredskills: z.string().min(20, { message: "Please add more skills" }),
   deadline: z.date(),
 });
 
@@ -62,9 +62,6 @@ type CreateFormValues = z.infer<typeof CreateFormSchema>;
 // preview item values
 const defaultValues: Partial<CreateFormValues> = {
   title: "",
-  description: "",
-  budget: 0,
-  requiredskills: [],
 };
 
 export const CreateForm = ({ username }: CreateFormProps) => {
@@ -126,7 +123,10 @@ export const CreateForm = ({ username }: CreateFormProps) => {
         title: data.title,
         description: data.description,
         budget: data.budget,
-        requiredSkills: data.requiredskills.map((skill) => skill.trim()),
+        requiredSkills: data.requiredskills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter((skill) => skill.length > 0),
         deadline: data.deadline.toISOString(),
       });
 
@@ -150,21 +150,21 @@ export const CreateForm = ({ username }: CreateFormProps) => {
         className="w-full h-fit p-4 space-y-8 py-8 px-4"
       >
         <div className="space-y-3">
-        <Label className="font-normal">Add up to 5 images:</Label>
-        <div className="flex space-x-2">
-          <Input
-            id="image"
-            type="file"
-            accept="image/*"
-            ref={imageInput}
-            onChange={(event) =>
-              setSelectedImages(Array.from(event.target.files || []))
-            }
-            multiple
-            className="cursor-pointer w-fit bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:border-zinc-400 focus:border-zinc-400 focus:bg-zinc-200"
-            disabled={selectedImages.length >= 5}
-          />
-        </div>
+          <Label className="font-normal">Add up to 5 images:</Label>
+          <div className="flex space-x-2">
+            <Input
+              id="image"
+              type="file"
+              accept="image/*"
+              ref={imageInput}
+              onChange={(event) =>
+                setSelectedImages(Array.from(event.target.files || []))
+              }
+              multiple
+              className="cursor-pointer w-fit bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:border-zinc-400 focus:border-zinc-400 focus:bg-zinc-200"
+              disabled={selectedImages.length >= 5}
+            />
+          </div>
         </div>
         <FormField
           control={form.control}
@@ -227,8 +227,6 @@ export const CreateForm = ({ username }: CreateFormProps) => {
                   placeholder="Photoshop, Illustrator, Figma - use , to separate skills"
                   {...field}
                   type="text"
-                  // value={field.value?.join(", ") || ""}
-                  onChange={(e) => field.onChange(e.target.value.split(",").map((skill) => skill.trim()))}
                 />
               </FormControl>
               <FormMessage />

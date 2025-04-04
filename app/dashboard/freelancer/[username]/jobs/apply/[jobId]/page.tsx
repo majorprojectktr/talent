@@ -1,10 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Usable, use } from "react";
+import { use } from "react";
 import { ApplyForm } from "./_components/apply-form";
-import { Separator } from "@/components/ui/separator";
 
 type Params = {
   username: string;
@@ -12,7 +12,7 @@ type Params = {
 };
 
 interface ApplyJobProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const ApplyJob = ({ params }: ApplyJobProps) => {

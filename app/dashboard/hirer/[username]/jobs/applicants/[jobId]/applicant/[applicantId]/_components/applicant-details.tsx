@@ -1,16 +1,17 @@
 "use client";
 
 import { DocumentViewer } from "@/components/document-viewer";
+import { TextareaCustom } from "@/components/textarea-custom";
 import { Label } from "@/components/ui/label";
 import { formatNumberWithCommas } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
-interface ListingProps {
+interface ApplicantDetailsProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
 }
 
-export const ApplicantDetails = ({ data }: ListingProps) => {
+export const ApplicantDetails = ({ data }: ApplicantDetailsProps) => {
   if (!data) return null;
 
   return (
@@ -46,11 +47,13 @@ export const ApplicantDetails = ({ data }: ListingProps) => {
 
       <div className="flex flex-col gap-1">
         <Label className="w-fit text-base font-medium text-black leading-tight">
-          Cover Letter
+          Proposal
         </Label>
-        <div className="w-fit text-sm font-normal text-black leading-tight">
-          {data?.coverLetter}
-        </div>
+        <TextareaCustom
+          value={data?.proposal}
+          disabled
+          className="w-fit text-base font-medium text-black leading-tight cursor-default max-h-fit"
+        />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -65,7 +68,7 @@ export const ApplicantDetails = ({ data }: ListingProps) => {
         <Label className="w-fit text-base font-medium text-black leading-tight">
           Resume
         </Label>
-        <DocumentViewer file={data.applicationMedia.url} />
+        <DocumentViewer file={data.user.resumeUrl} />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export const create = mutation({
   args: {
     jobId: v.id("jobs"),
     freelancerId: v.id("users"),
-    coverLetter: v.string(),
+    proposal: v.string(),
     proposedRate: v.number(),
   },
   handler: async (ctx, args) => {
@@ -31,7 +31,7 @@ export const create = mutation({
     const applicationId = await ctx.db.insert("applications", {
       jobId: args.jobId,
       freelancerId: args.freelancerId,
-      coverLetter: args.coverLetter,
+      proposal: args.proposal,
       status: "pending",
       proposedRate: args.proposedRate,
     });
@@ -125,8 +125,8 @@ export const getApplicationsByJobId = query({
       applications.map(async (application) => {
         const applicationMedia = await ctx.db
           .query("applicationMedia")
-          .withIndex("by_applicationId", (q) =>
-            q.eq("applicationId", application._id)
+          .withIndex("by_userId", (q) =>
+            q.eq("userId", application.freelancerId)
           )
           .unique();
 
@@ -141,8 +141,7 @@ export const getApplicationsByJobId = query({
 
         return {
           ...application,
-          applicationMedia: { ...applicationMedia, url },
-          applicant,
+          applicant: { ...applicant, resumeUrl: url },
         };
       })
     );
@@ -151,7 +150,7 @@ export const getApplicationsByJobId = query({
   },
 });
 
-export const getApplicationsByJobIdAndFreelancerId = query({
+export const getApplicationByJobIdAndFreelancerId = query({
   args: {
     jobId: v.id("jobs"),
     applicantId: v.id("users"),
@@ -176,28 +175,22 @@ export const getApplicationsByJobIdAndFreelancerId = query({
       )
       .unique();
 
-    if (!application) {
-      throw new Error("No Application Found!");
-    }
-
     const applicationMedia = await ctx.db
       .query("applicationMedia")
-      .withIndex("by_applicationId", (q) =>
-        q.eq("applicationId", application._id)
-      )
+      .withIndex("by_userId", (q) => q.eq("userId", args.applicantId))
       .unique();
 
-    const url: string | null = await ctx.runQuery(
-      internal.applicationMedia.getMediaUrl,
-      {
-        storageId: applicationMedia?.storageId,
-      }
-    );
+    const url = await ctx.runQuery(internal.applicationMedia.getMediaUrl, {
+      storageId: applicationMedia?.storageId,
+    });
+
+    if (!application) {
+      return null;
+    }
 
     return {
       ...application,
-      applicationMedia: { ...applicationMedia, url },
-      user,
+      user: { ...user, resumeUrl: url },
     };
   },
 });
@@ -237,6 +230,12 @@ export const updateApplication = mutation({
       throw new Error("Application not found");
     }
 
+    const job = await ctx.db.get(application.jobId);
+
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
     await ctx.db.patch(args.applicationId, {
       status: args.status,
     });
@@ -247,8 +246,14 @@ export const updateApplication = mutation({
         applicationtId: args.applicationId,
         status: "in_progress",
       });
+
+      await ctx.runMutation(internal.escrow.fundEscrow, {
+        hirerId: user._id,
+        jobId: application.jobId,
+        amount: job.budget,
+      });
     }
-    
+
     return args.applicationId;
   },
 });

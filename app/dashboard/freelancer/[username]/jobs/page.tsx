@@ -8,7 +8,7 @@ interface SearchParams {
 }
 
 interface JobsProps {
-  searchParams: Usable<SearchParams>;
+  searchParams: Promise<SearchParams>;
 }
 const Jobs = ({ searchParams }: JobsProps) => {
   const unwrappedSearchParams = use(searchParams);

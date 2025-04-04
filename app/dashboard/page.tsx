@@ -30,17 +30,28 @@ const Dashboard = () => {
   const handleConfirm = async (role: string) => {
     if (currentUser?.role) return;
     await mutate({ role });
-    push(`dashboard/${role}`);
+    if (role === "freelancer") {
+      push(`/dashboard/freelancer/${currentUser?.username}/profile/edit`);
+    } else if (role === "hirer") {
+      push(`/dashboard/hirer/${currentUser?.username}/jobs/create`);
+    }
   };
+
+  //update username and profileImageUrl if user already exists
+  useEffect(() => {
+    const updateUser = async () => {
+      await mutate({});
+    };
+    updateUser();
+  }, []);
 
   //useEffects
   useEffect(() => {
-    if(!currentUser) return
+    if (!currentUser) return;
     push(`dashboard/${currentUser.role}/${currentUser.username}/jobs`);
   }, [currentUser, push]);
 
-
-  if (currentUser) return <AuthLoader/>;
+  if (currentUser) return <AuthLoader />;
 
   return (
     <div className="w-full h-96 flex flex-col justify-center items-center gap-y-4">
@@ -48,41 +59,39 @@ const Dashboard = () => {
         Please select a role
       </h2>
       <div className="space-x-4">
-        {roles.map((role, index) => {
-          return (
-            <AlertDialog key={index}>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant={pending ? "ghost" : "outline"}
-                  className="capitalize cursor-pointer"
-                  disabled={pending}
+        {roles.map((role, index) => (
+          <AlertDialog key={index}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant={pending ? "ghost" : "outline"}
+                className="capitalize cursor-pointer"
+                disabled={pending}
+              >
+                {role}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently set your
+                  role to {role}.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="cursor-pointer">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => handleConfirm(role)}
+                  className="cursor-pointer"
                 >
-                  {role}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently set your
-                    role to {role}.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="cursor-pointer">
-                    Cancel
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleConfirm(role)}
-                    className="cursor-pointer"
-                  >
-                    Confirm
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          );
-        })}
+                  Confirm
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ))}
       </div>
     </div>
   );

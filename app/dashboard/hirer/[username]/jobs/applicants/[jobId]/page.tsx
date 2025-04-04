@@ -13,7 +13,7 @@ interface Params {
 }
 
 interface ApplicantsProps {
-  params: Usable<Params>;
+  params: Promise<Params>;
 }
 
 const Applicants = ({ params }: ApplicantsProps) => {
