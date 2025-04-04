@@ -4,7 +4,7 @@ export interface Job {
   createdAt: number;
   id: string;
   title: string;
-  description: string;
+  description?: string;
   budget: number;
   deadline: string;
   requiredSkills: string[];
@@ -17,9 +17,23 @@ export interface Application {
   id: string;
   jobId: string;
   freelancerId: string;
-  coverLetter: string;
+  proposal: string;
   proposedRate: number;
   status: string;
+}
+
+export interface Freelancer {
+  createdAt: number;
+  id: string;
+  fullname: string;
+  username: string;
+  role: string;
+  skills?: string[];
+  email: string;
+  profileImageUrl?: string;
+  isActive?: boolean;
+  profession?: string;
+  experience?: string;
 }
 
 export type ApplicationWithJob = Application & Partial<Job>;

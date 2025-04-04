@@ -1,15 +1,5 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -24,7 +14,6 @@ import { Id } from "@/convex/_generated/dataModel";
 import { truncateText } from "@/lib/utils";
 import { Application } from "@/types";
 import { useQuery } from "convex/react";
-import { EyeIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 
@@ -42,6 +31,7 @@ interface FullApplication extends Application {
   } | null;
   applicant?: {
     fullname: string;
+    resumeUrl: string;
     _id: Id<"users">;
     // Add other applicant properties here
   } | null;
@@ -57,16 +47,16 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
     () =>
       applications
         ?.map((application) => {
-          if (!application.applicant || !application.applicationMedia)
+          if (!application.applicant)
             return null;
           return {
             id: application._id,
             proposedRate: application.proposedRate,
             status: application.status,
-            coverLetter: application.coverLetter,
+            proposal: application.proposal,
             applicant: application.applicant.fullname,
             applicantId: application.applicant._id,
-            resumeUrl: application.applicationMedia.url,
+            resumeUrl: application.applicant.resumeUrl,
             createdAt: application._creationTime,
           };
         })
@@ -85,8 +75,8 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
         <TableRow>
           <TableHead>Id</TableHead>
           <TableHead>Applicant</TableHead>
+          <TableHead>Proposal</TableHead>
           <TableHead>Proposed Rate</TableHead>
-          <TableHead>Cover Letter</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
@@ -96,8 +86,8 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
           <TableRow key={item?.id}>
             <TableCell>{index + 1}</TableCell>
             <TableCell>{item?.applicant}</TableCell>
+            <TableCell>{truncateText(item?.proposal as string)}</TableCell>
             <TableCell>{item?.proposedRate}</TableCell>
-            <TableCell>{truncateText(item?.coverLetter as string)}</TableCell>
             <TableCell
               className={`${item?.status === "accepted" ? "text-[#27548A]" : item?.status === "rejected" ? "text-[#F16767]" : item?.status === "pending" ? "text-[#D3CA79]" : "text-[#5F8B4C]"}`}
             >

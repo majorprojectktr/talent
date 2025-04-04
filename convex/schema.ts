@@ -14,14 +14,15 @@ export default defineSchema({
     // Role-specific fields
     // For freelancers
     skills: v.optional(v.array(v.string())),
-    experience: v.optional(v.number()),
-    resumeFileId: v.optional(v.string()),
+    experience: v.optional(v.string()),
+    profession:v.optional(v.string()),
     // For hirers
     companyName: v.optional(v.string()),
     balance: v.number(), // Wallet balance
   })
     .index("by_clerkId", ["clerkId"])
-    .index("by_username", ["username"]),
+    .index("by_username", ["username"])
+    .index("by_role", ["role"]),
   // Jobs table
   jobs: defineTable({
     title: v.string(),
@@ -62,7 +63,7 @@ export default defineSchema({
   applications: defineTable({
     jobId: v.id("jobs"),
     freelancerId: v.id("users"),
-    coverLetter: v.string(),
+    proposal: v.string(),
     status: v.union(
       v.literal("pending"),
       v.literal("accepted"),
@@ -75,13 +76,13 @@ export default defineSchema({
     .index("by_freelancerId", ["freelancerId"])
     .index("by_jobId_and_status", ["jobId", "status"])
     .index("by_jobId_freelancerId", ["jobId", "freelancerId"]),
-  //store media files for applications eg: resume, cover letter, etc
+  //store media files for applications eg: resume, proposal, etc
   applicationMedia: defineTable({
     format: v.string(),
     storageId: v.id("_storage"),
-    applicationId: v.id("applications"),
+    userId: v.id("users"),
   })
-    .index("by_applicationId", ["applicationId"])
+    .index("by_userId", ["userId"])
     .index("by_storageId", ["storageId"]),
   // Transactions table (for escrow)
   transactions: defineTable({

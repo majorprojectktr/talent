@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const store = mutation({
   args: {
@@ -16,27 +17,72 @@ export const store = mutation({
       .query("users")
       .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.tokenIdentifier))
       .unique();
+
     if (user !== null) {
-      // If we've seen this identity before but the name has changed, patch the value.
-      if (user.username !== identity.nickname) {
-        await ctx.db.patch(user._id, { username: identity.nickname });
-      }
+      // update username and profile url if user already exists as this may be updated on the clerk side
+      await ctx.db.patch(user._id, {
+        username: identity.nickname,
+        profileImageUrl: identity.pictureUrl,
+      });
       return user._id;
     }
 
-    // If it's a new identity, create a new `User`.
-    const userId = await ctx.db.insert("users", {
-      clerkId: identity.tokenIdentifier,
-      role: args.role,
-      email: identity.email!,
-      fullname: identity.name!,
-      username: identity.nickname!,
-      profileImageUrl: identity.profileUrl,
-      isActive: true,
-      balance: 0,
-    });
+    let userId = null;
+
+    if (args.role) {
+      // If it's a new identity, create a new `User`.
+      userId = await ctx.db.insert("users", {
+        clerkId: identity.tokenIdentifier,
+        role: args.role,
+        email: identity.email!,
+        fullname: identity.name!,
+        username: identity.nickname!,
+        profileImageUrl: identity.profileUrl,
+        isActive: true,
+        balance: 0,
+      });
+    }
 
     return userId;
+  },
+});
+
+export const update = mutation({
+  args: {
+    id: v.id("users"),
+    field: v.union(
+      v.literal("fullname"),
+      v.literal("username"),
+      v.literal("profession"),
+      v.literal("skills"),
+      v.literal("experience")
+    ),
+    value: v.union(v.string(), v.number(), v.array(v.string())),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await ctx.db.get(args.id);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (identity.email !== user.email) {
+      throw new Error("Unauthorized");
+    }
+
+    const value = args.value;
+
+    await ctx.db.patch(args.id, {
+      [args.field]: value,
+    });
+
+    return user;
   },
 });
 
@@ -88,7 +134,30 @@ export const getUserById = query({
       throw new Error("Unauthorised");
     }
     const user = await ctx.db.get(args.userId);
-    return user;
+
+    const applicationMedia = await ctx.db
+      .query("applicationMedia")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .unique();
+
+    const url: string = await ctx.runQuery(
+      internal.applicationMedia.getMediaUrl,
+      {
+        storageId: applicationMedia?.storageId,
+      }
+    ) as string;
+
+    return { ...user, resumeUrl: url };
   },
 });
 
+export const getUsersByRole = query({
+  args: { role: v.string() },
+  handler: async (ctx, args) => {
+    const users = await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", args.role))
+      .collect();
+    return users;
+  },
+});

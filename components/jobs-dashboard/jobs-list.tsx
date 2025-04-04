@@ -6,7 +6,6 @@ interface JobsListProps {
   query: {
     search?: string;
     favorites?: string;
-    filter?: string;
   };
 }
 
@@ -17,7 +16,7 @@ export const JobsList = ({ query }: JobsListProps) => {
   });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-5 mt-8 pb-10 mx-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-8 pb-10 mx-10">
       {jobs?.map((job) => {
         return (
           <JobCard
@@ -25,7 +24,6 @@ export const JobsList = ({ query }: JobsListProps) => {
             id={job._id}
             createdAt={job._creationTime}
             title={job.title}
-            description={job.description}
             budget={job.budget}
             deadline={job.deadline}
             requiredSkills={job.requiredskills}

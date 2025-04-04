@@ -25,7 +25,7 @@ export function ApplicationTable() {
             createdAt: application._creationTime,
             jobId: application.jobId,
             freelancerId: application.freelancerId,
-            coverLetter: application.coverLetter,
+            proposal: application.proposal,
             proposedRate: application.proposedRate,
             status: application.status,
             title: application.job.title,
