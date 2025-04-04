@@ -29,25 +29,13 @@ const AppbarLanding = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
               <div
-                onClick={() =>
-                  handleNavigation(
-                    currentUser!,
-                    `/dashboard/`,
-                    push
-                  )
-                }
+                onClick={() => push("/dashboard")}
                 className="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:bg-white/90 transition-colors cursor-pointer"
               >
                 Find Jobs
               </div>
               <div
-                onClick={() =>
-                  handleNavigation(
-                    currentUser!,
-                    `/dashboard/`,
-                    push
-                  )
-                }
+                onClick={() => push("/dashboard")}
                 className="px-6 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-xl hover:bg-white/10 transition-colors cursor-pointer"
               >
                 Post a Job
