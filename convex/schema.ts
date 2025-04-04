@@ -38,13 +38,14 @@ export default defineSchema({
       v.literal("cancelled")
     ), // "open", "in_progress", "completed", "cancelled"
     selectedApplicationId: v.optional(v.id("applications")),
+    bookmarked: v.optional(v.boolean()),
   })
     .index("by_hirerId", ["hirerId"])
     .index("by_status", ["status"])
     .searchIndex("search_title", {
       searchField: "title",
     }),
-  userFavorites: defineTable({
+  userBookmarks: defineTable({
     userId: v.id("users"),
     jobId: v.id("jobs"),
   })

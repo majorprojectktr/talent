@@ -58,10 +58,10 @@ export const SearchInput = () => {
                 onChange={handleChange}
                 value={value}
             />
-            <Button className="ml-2" variant={"ghost"} onClick={handleSubmit}>
+            {/* <Button className="ml-2 hidden md:block" variant={"ghost"} onClick={handleSubmit}>
                 Search
             </Button>
-            
+             */}
         </div>
     )
 }   

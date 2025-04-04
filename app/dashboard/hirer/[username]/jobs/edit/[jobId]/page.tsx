@@ -48,7 +48,7 @@ const Edit = ({ params }: JobProps) => {
   };
 
   return (
-    <div className="w-full h-fit max-w-2xl mx-auto p-4 space-y-2 border-2 rounded-xl">
+    <div className="w-full h-fit max-w-4xl mx-auto p-4 space-y-2 border-2 rounded-xl">
       <div className="flex items-center justify-between">
         <Button
           variant={"outline"}
