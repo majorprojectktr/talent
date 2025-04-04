@@ -37,6 +37,13 @@ interface FullApplication extends Application {
   } | null;
 }
 
+const statusColors: Record<string, string> = {
+  accepted: "text-[#27548A]",
+  rejected: "text-[#F16767]",
+  pending: "text-[#D3CA79]",
+  completed: "text-[#5F8B4C]",
+};
+
 export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProps) => {
   const id = jobId as Id<"jobs">;
   const applications = useQuery(api.applications.getApplicationsByJobId, {
@@ -89,7 +96,7 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
             <TableCell>{truncateText(item?.proposal as string)}</TableCell>
             <TableCell>{item?.proposedRate}</TableCell>
             <TableCell
-              className={`${item?.status === "accepted" ? "text-[#27548A]" : item?.status === "rejected" ? "text-[#F16767]" : item?.status === "pending" ? "text-[#D3CA79]" : "text-[#5F8B4C]"}`}
+              className={`${statusColors[item?.status as string] || "text-black"}`}
             >
               {item?.status}
             </TableCell>

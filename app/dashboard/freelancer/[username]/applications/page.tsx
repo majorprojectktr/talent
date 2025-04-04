@@ -1,7 +1,11 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Usable, use } from "react";
 import { ApplicationTable } from "./_components/appication-table";
+import { Separator } from "@/components/ui/separator";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Params {
   username: string;
@@ -13,10 +17,18 @@ interface ApplicationsDashboardProps {
 
 const ApplicationsDashboard = ({ params }: ApplicationsDashboardProps) => {
   const unWrappedParams = use(params);
+ const router = useRouter();
 
   return (
-    <div className="space-y-2 ">
-      <div className="w-full h-fit flex items-center justify-between p-4">
+    <div className="w-full h-fit max-w-4xl mx-auto p-4 space-y-2 border-2 rounded-xl">
+      <div className="flex items-center justify-between">
+                <Button
+          variant={"outline"}
+          className="capitalize cursor-pointer"
+          onClick={() => router.back()}
+        >
+          <ArrowLeft size={20} color="black" />
+        </Button>
         <h2 className="text-xl md:text-2xl font-semibold text-black leading-tight">
           Applied Jobs
         </h2>
@@ -26,9 +38,8 @@ const ApplicationsDashboard = ({ params }: ApplicationsDashboardProps) => {
           </Link>
         </Button>
       </div>
-      <div className="w-full max-w-7xl mx-auto px-4">
-        <ApplicationTable />
-      </div>
+      <Separator />
+      <ApplicationTable />
     </div>
   );
 };

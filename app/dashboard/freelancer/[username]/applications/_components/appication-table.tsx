@@ -12,6 +12,17 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
+import { Link } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+
+
+const statusColors: Record<string, string> = {
+  accepted: "text-[#27548A]",
+  rejected: "text-[#F16767]",
+  pending: "text-[#D3CA79]",
+  completed: "text-[#5F8B4C]",
+};
 
 export function ApplicationTable() {
   const applications = useQuery(api.applications.get, {});
@@ -38,6 +49,9 @@ export function ApplicationTable() {
     [applications]
   );
 
+  const {push} = useRouter();
+
+
   return (
     <Table>
       <TableCaption>A list of your recent applications.</TableCaption>
@@ -47,6 +61,7 @@ export function ApplicationTable() {
           <TableHead>Budget</TableHead>
           <TableHead>Proposed Rate</TableHead>
           <TableHead>Status</TableHead>
+          <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -56,9 +71,14 @@ export function ApplicationTable() {
             <TableCell>{item?.budget}</TableCell>
             <TableCell>{item?.proposedRate}</TableCell>
             <TableCell
-              className={`${item?.status === "accepted" ? "text-[#27548A]" : item?.status === "rejected" ? "text-[#F16767]" : item?.status === "pending" ? "text-[#D3CA79]" : "text-[#5F8B4C]"}`}
+              className={`${statusColors[item?.status as string] || "text-black"}`}
             >
               {item?.status}
+            </TableCell>
+            <TableCell>
+            <Badge variant="outline" className="cursor-pointer" onClick={() => push(`/dashboard/freelancer/${item?.freelancerId}/jobs/${item?.jobId}`)}>
+                View
+              </Badge>
             </TableCell>
           </TableRow>
         ))}
