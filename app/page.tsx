@@ -32,7 +32,7 @@ const AppbarLanding = () => {
                 onClick={() =>
                   handleNavigation(
                     currentUser!,
-                    `/dashboard/freelancer/${currentUser?.username}/jobs`,
+                    `/dashboard/`,
                     push
                   )
                 }
@@ -44,7 +44,7 @@ const AppbarLanding = () => {
                 onClick={() =>
                   handleNavigation(
                     currentUser!,
-                    `/dashboard/hirer/${currentUser?.username}/jobs`,
+                    `/dashboard/`,
                     push
                   )
                 }
