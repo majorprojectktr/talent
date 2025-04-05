@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "ceaseless-duck-233.convex.cloud",
+        pathname: "**",
+      },
+      {
+        protocol: "https",
         hostname: "upload.wikimedia.org",
         pathname: "**",
       },
