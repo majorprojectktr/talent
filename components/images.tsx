@@ -53,7 +53,7 @@ export const Images = ({
                                     src={image.url || 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/2560px-Placeholder_view_vector.svg.png'}
                                     alt={title}
                                     fill
-                                    className="rounded-md object-cover"
+                                    className="rounded-md object-contain"
                                 />
                             </AspectRatio>
                         </CarouselItem>
