@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "clever-cardinal-447.convex.cloud",
+        hostname: "ceaseless-duck-233.convex.cloud",
         pathname: "**",
       },
       {
