@@ -80,55 +80,24 @@ export const getByFreelancerId = query({
         q.eq("freelancerId", args.freelancerId)
       )
       .collect();
-
-    // for each review, get the order
-    const reviewsFullType = await Promise.all(
+      
+    const reviewsWithAuthor = await Promise.all(
       reviews.map(async (review) => {
-        const job = await ctx.db
-          .query("jobs")
-          .filter((q) => q.eq(q.field("_id"), review.jobId))
-          .unique();
-
-        if (!job) {
-          throw new Error("Job not found");
-        }
-
-        const image = await ctx.db
-          .query("jobMedia")
-          .withIndex("by_jobId", (q) => q.eq("jobId", job._id))
-          .first();
-
-        if (!image) {
-          throw new Error("Image not found");
-        }
-
-        const imageUrl = await ctx.storage.getUrl(image.storageId);
-
-        if (!imageUrl) {
-          throw new Error("Image not found");
-        }
-
-        const imageWithUrl = { ...image, url: imageUrl };
-
         const author = await ctx.db
           .query("users")
           .filter((q) => q.eq(q.field("_id"), review.authorId))
           .unique();
-
         if (!author) {
           throw new Error("Author not found");
         }
-
         return {
           ...review,
-          job,
-          image: imageWithUrl,
           author,
         };
       })
     );
-
-    return reviewsFullType;
+      
+    return reviewsWithAuthor; 
   },
 });
 
