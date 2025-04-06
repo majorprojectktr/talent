@@ -1,11 +1,13 @@
 "use client";
 
 import { Images } from "@/components/images";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { formatDateTime, formatNumberWithCommas } from "@/lib/utils";
 import { useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
 
 interface JobListingProps {
   jobId: string;
@@ -25,6 +27,9 @@ export const JobListing = ({ jobId }: JobListingProps) => {
       <div className="flex flex-col gap-1">
         <Label className="w-fit text-base font-medium text-black leading-tight">
           Title
+          <Badge variant={"outline"}>
+                {`Created: ${formatDistanceToNow(job._creationTime, { addSuffix: true })}`}
+              </Badge>
         </Label>
         <div className="w-fit text-sm font-normal text-black leading-tight">
           {job.title}

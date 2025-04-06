@@ -110,6 +110,12 @@ export const getApplicationsByJobId = query({
       throw new Error("Unauthorized");
     }
 
+    const job = await ctx.db.get(args.jobId);
+
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
     const applications = await ctx.db
       .query("applications")
       .withIndex("by_jobId", (q) => q.eq("jobId", args.jobId))
@@ -142,6 +148,7 @@ export const getApplicationsByJobId = query({
         return {
           ...application,
           applicant: { ...applicant, resumeUrl: url },
+          job
         };
       })
     );
@@ -168,6 +175,12 @@ export const getApplicationByJobIdAndFreelancerId = query({
       throw new Error("User not found");
     }
 
+    const job = await ctx.db.get(args.jobId);
+
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
     const application = await ctx.db
       .query("applications")
       .withIndex("by_jobId_freelancerId", (q) =>
@@ -191,6 +204,7 @@ export const getApplicationByJobIdAndFreelancerId = query({
     return {
       ...application,
       user: { ...user, resumeUrl: url },
+      job
     };
   },
 });

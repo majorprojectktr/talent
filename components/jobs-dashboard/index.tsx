@@ -17,7 +17,7 @@ export const JobsDashboard = ({ query }: JobsDashboardProps) => {
   const { push } = useRouter();
   const pathname = usePathname();
   const redirectUrlPrime = pathname.includes("freelancer")
-    ? `/dashboard/freelancer/${currentUser?.username}/profile/edit`
+    ? `/dashboard/freelancer/${currentUser?.username}/profile`
     : `/dashboard/hirer/${currentUser?.username}/jobs/create`;
 
   const redirectUrlSec = pathname.includes("freelancer")
@@ -38,7 +38,7 @@ export const JobsDashboard = ({ query }: JobsDashboardProps) => {
               : "Find Freelancers"}
           </Button>
           <Button variant={"prime"} onClick={() => push(redirectUrlPrime)}>
-            {pathname.includes("freelancer") ? "Edit Profile" : "Create Job"}
+            {pathname.includes("freelancer") ? "Profile" : "Create Job"}
           </Button>
         </div>
       </div>

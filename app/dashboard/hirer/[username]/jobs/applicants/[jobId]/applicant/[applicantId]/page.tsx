@@ -151,7 +151,7 @@ const Applicant = ({ params }: ApplicantsProps) => {
         </div>
       </div>
       <Separator />
-      <ApplicantDetails data={applicant} />
+      <ApplicantDetails data={applicant} jobId={unWrappedParams.jobId} />
     </div>
   );
 };

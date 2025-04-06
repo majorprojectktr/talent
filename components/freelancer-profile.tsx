@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Badge } from "./ui/badge";
 
 interface FreelancerProfileProps {
   freelancerId: string;
@@ -18,6 +19,8 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
   const freelancer = useQuery(api.users.getUserById, {
     userId,
   });
+
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   useEffect(() => {
     console.log(freelancer, "✅✅");
@@ -90,7 +93,14 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
         <Label className="w-fit text-base font-medium text-black leading-tight">
           Resume
         </Label>
-        <DocumentViewer file={freelancer.resumeUrl} />
+        <Badge className="cursor-pointer" variant={isResumeOpen ? "secondary" : "outline"} onClick={() => setIsResumeOpen(!isResumeOpen)}>
+          {isResumeOpen ? "Hide" : "Show"}
+        </Badge>
+        {
+          isResumeOpen && (
+            <DocumentViewer file={freelancer.resumeUrl} />
+          )
+        }
       </div>
     </div>
   );

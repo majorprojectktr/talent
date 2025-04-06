@@ -18,6 +18,7 @@ import type * as applications from "../applications.js";
 import type * as escrow from "../escrow.js";
 import type * as jobMedia from "../jobMedia.js";
 import type * as jobs from "../jobs.js";
+import type * as reviews from "../reviews.js";
 import type * as stripe from "../stripe.js";
 import type * as transactions from "../transactions.js";
 import type * as users from "../users.js";
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   escrow: typeof escrow;
   jobMedia: typeof jobMedia;
   jobs: typeof jobs;
+  reviews: typeof reviews;
   stripe: typeof stripe;
   transactions: typeof transactions;
   users: typeof users;

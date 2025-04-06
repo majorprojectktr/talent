@@ -9,6 +9,7 @@ import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { FreelancerProfile } from "@/components/freelancer-profile";
 
+
 interface Params {
   username: string;
   freelancerId: string;
@@ -18,7 +19,7 @@ interface JobDetailsProps {
   params: Promise<Params>;
 }
 
-const ProfessionalProfile = ({ params }: JobDetailsProps) => {
+const Profile = ({ params }: JobDetailsProps) => {
   const unWrappedParams = use(params);
   const currentUser = useQuery(api.users.getCurrentUser);
 
@@ -48,9 +49,9 @@ const ProfessionalProfile = ({ params }: JobDetailsProps) => {
 
       <Separator />
 
-      <FreelancerProfile freelancerId={unWrappedParams.freelancerId} />
+      <FreelancerProfile freelancerId={currentUser._id} />
     </div>
   );
 };
 
-export default ProfessionalProfile;
+export default Profile;
