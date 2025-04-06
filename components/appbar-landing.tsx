@@ -14,7 +14,7 @@ const parkinsans = Parkinsans({ subsets: ['latin'] })
 const AppbarLanding = () => {
   return (
     <nav
-      className="w-full max-w-7xl z-10 top-14 left-1/2 -translate-x-1/2 fixed 
+      className="w-full max-w-7xl z-10 top-0 sm:top-14 left-1/2 -translate-x-1/2 fixed 
     flex items-center justify-between gap-5 py-2 px-4 rounded-xl 
     bg-[#1D1616]/50 backdrop-blur-md border text-white border-gray-800"
     >
