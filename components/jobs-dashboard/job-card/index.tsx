@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useApiMutation } from "@/hooks/use-api-mutation";
+import { pingColors, statusColors } from "@/lib/constants";
 import { formatDateTime, formatNumberWithCommas } from "@/lib/utils";
 import { Job } from "@/types";
 import { useQuery } from "convex/react";
@@ -18,19 +19,7 @@ import { Bookmark } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const statusColors: Record<string, string> = {
-  open: "text-[#27548A]",
-  cancelled: "text-[#F16767]",
-  in_progress: "text-[#D3CA79]",
-  completed: "text-[#5F8B4C]",
-};
 
-const pingColors: Record<string, string> = {
-  open: "bg-[#27548A]",
-  cancelled: "bg-[#F16767]",
-  in_progress: "bg-[#D3CA79]",
-  completed: "bg-[#5F8B4C]",
-};
 
 const JobCard = ({
   createdAt,

@@ -1,6 +1,7 @@
 "use client";
 
 import { Images } from "@/components/images";
+import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { formatDateTime } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -85,9 +87,7 @@ export const EditJob = ({ id }: EditJobProps) => {
 
   const onUpload = useDebouncedCallback(() => {
     handleSendImage(jobId).then(() => {
-      toast.info(
-        'Images updated successfully!'
-      );
+      toast.info("Images updated successfully!");
     });
   }, 1000);
 
@@ -95,13 +95,16 @@ export const EditJob = ({ id }: EditJobProps) => {
     if (job && data === undefined) {
       setData(job);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [job]);
 
   if (!job || !data || !currentUser) return <div>Loading...</div>;
 
   return (
     <div className="w-full h-fit p-4 space-y-6 py-8 px-4">
+      <Badge variant={"outline"}>
+        {`Created: ${formatDistanceToNow(job._creationTime, { addSuffix: true })}`}
+      </Badge>
       <div className="w-full space-y-8">
         {job.images.length > 0 && (
           <Images images={job.images} title={job.title} allowDelete={true} />
@@ -180,7 +183,9 @@ export const EditJob = ({ id }: EditJobProps) => {
         />
       </div>
       <div className="space-y-2">
-        <Label className="w-fit">Deadline: {`${formatDateTime(data.deadline).date}`}</Label>
+        <Label className="w-fit">
+          Deadline: {`${formatDateTime(data.deadline).date}`}
+        </Label>
         <Calendar
           mode="single"
           selected={data.deadline ? new Date(data.deadline) : undefined}

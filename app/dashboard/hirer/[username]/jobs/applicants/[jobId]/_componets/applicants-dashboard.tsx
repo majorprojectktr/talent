@@ -94,7 +94,7 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
             <TableCell>{index + 1}</TableCell>
             <TableCell>{item?.applicant}</TableCell>
             <TableCell>{truncateText(item?.proposal as string)}</TableCell>
-            <TableCell>{item?.proposedRate}</TableCell>
+            <TableCell>{`$${item?.proposedRate}`}</TableCell>
             <TableCell
               className={`${statusColors[item?.status as string] || "text-black"}`}
             >

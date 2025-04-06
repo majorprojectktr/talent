@@ -1,6 +1,7 @@
 "use client";
 import { useMemo } from "react";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -12,8 +13,6 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { Link } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 
 
@@ -69,7 +68,7 @@ export function ApplicationTable() {
           <TableRow key={item?.title}>
             <TableCell>{item?.title}</TableCell>
             <TableCell>{item?.budget}</TableCell>
-            <TableCell>{item?.proposedRate}</TableCell>
+            <TableCell>{`$${item?.proposedRate}`}</TableCell>
             <TableCell
               className={`${statusColors[item?.status as string] || "text-black"}`}
             >

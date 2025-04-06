@@ -15,7 +15,7 @@ export default defineSchema({
     // For freelancers
     skills: v.optional(v.array(v.string())),
     experience: v.optional(v.string()),
-    profession:v.optional(v.string()),
+    profession: v.optional(v.string()),
     // For hirers
     companyName: v.optional(v.string()),
     balance: v.number(), // Wallet balance
@@ -113,4 +113,15 @@ export default defineSchema({
     .index("by_fromUserId", ["fromUserId"])
     .index("by_toUserId", ["toUserId"])
     .index("by_stripeSessionId", ["stripeSessionId"]),
+  reviews: defineTable({
+    authorId: v.id("users"),
+    freelancerId: v.id("users"),
+    jobId: v.id("jobs"),
+    comment: v.string(),
+    communication_level: v.number(),
+    recommend_to_a_friend: v.number(),
+    service_as_described: v.number(),
+  })
+    .index("by_freelancerId", ["freelancerId"])
+    .index("by_jobId", ["jobId"]),
 });
