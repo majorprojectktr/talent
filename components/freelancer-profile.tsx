@@ -38,6 +38,10 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
     console.log(reviews, "reviews");
   }, [freelancer, reviews]);
 
+  const averageRating = () => {
+    
+  }
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((star) => {
       return (
