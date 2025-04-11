@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { Doc } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { use, useEffect, useState } from "react";
 import Body from "./_components/body";
@@ -17,18 +17,19 @@ interface FormProps {
 
 const ConversationPage = ({ params }: FormProps) => {
   const unwrappedParams = use(params);
-  const [conversation, setConversation] = useState<Doc<"conversations"> | null>(
+  const userId = unwrappedParams.otherUserId as Id<"users">;
+  const [conversation, setConversation] = useState<any | null>(
     null
   );
 
   const get = useMutation(api.conversations.getOrCreateConversation);
   const conv = useQuery(api.conversations.getConversation, {
-    userId: unwrappedParams.otherUserId,
+    userId,
   });
   useEffect(() => {
     const callMutation = async () => {
       try {
-        const result = await get({ otherUserId: unwrappedParams.otherUserId });
+        const result = await get({ otherUserId: userId });
         setConversation(result);
       } catch (error) {
         console.error("Mutation failed:", error);
