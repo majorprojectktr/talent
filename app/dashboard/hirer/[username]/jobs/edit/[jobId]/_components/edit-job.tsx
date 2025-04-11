@@ -107,7 +107,7 @@ export const EditJob = ({ id }: EditJobProps) => {
       </Badge>
       <div className="w-full space-y-8">
         {job.images.length > 0 && (
-          <Images images={job.images} title={job.title} allowDelete={true} />
+          <Images images={job.images} title={job.title} allowDelete={job.status === "completed" || job.status === "cancelled" ? false : true} />
         )}
         <div className="space-y-3">
           <Label className="font-normal">Add up to 5 images:</Label>
@@ -123,7 +123,7 @@ export const EditJob = ({ id }: EditJobProps) => {
               }}
               multiple
               className="cursor-pointer w-fit bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:border-zinc-400 focus:border-zinc-400 focus:bg-zinc-200"
-              disabled={selectedImages.length >= 5}
+              disabled={selectedImages.length >= 5 || job.images.length >= 5 || job.status === "completed" || job.status === "cancelled"} 
             />
           </div>
         </div>
@@ -137,6 +137,7 @@ export const EditJob = ({ id }: EditJobProps) => {
             setData({ ...data, title: e.target.value });
             onInput(e.target.value, "title");
           }}
+          disabled={job.status === "completed" || job.status === "cancelled"}
         />
       </div>
       <div className="space-y-2">
@@ -149,6 +150,7 @@ export const EditJob = ({ id }: EditJobProps) => {
             onInput(e.target.value, "description");
           }}
           rows={4}
+          disabled={job.status === "completed" || job.status === "cancelled"}
         />
       </div>
       <div className="space-y-2">
@@ -164,6 +166,7 @@ export const EditJob = ({ id }: EditJobProps) => {
           type="number"
           min="50"
           max="10000"
+          disabled={job.status === "completed" || job.status === "cancelled"}
         />
       </div>
 
@@ -180,6 +183,7 @@ export const EditJob = ({ id }: EditJobProps) => {
             setData({ ...data, requiredskills: value });
             onInput(value, "requiredskills");
           }}
+          disabled={job.status === "completed" || job.status === "cancelled"}
         />
       </div>
       <div className="space-y-2">
@@ -195,6 +199,7 @@ export const EditJob = ({ id }: EditJobProps) => {
               setData({ ...data, deadline: date.toISOString() });
             }
           }}
+          disabled={job.status === "completed" || job.status === "cancelled"}
           className="w-fit rounded-md border"
         />
       </div>

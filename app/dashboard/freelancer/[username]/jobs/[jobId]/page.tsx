@@ -34,14 +34,17 @@ const JobDetails = ({ params }: JobDetailsProps) => {
   const jobId = unWrappedParams.jobId as Id<"jobs">;
   const job = useQuery(api.jobs.getJobsById, { jobId });
 
-  const application = useQuery(api.applications.getApplicationByJobIdAndFreelancerId, {
-    jobId,
-    applicantId: currentUser?._id as Id<"users">,
-  });
+  const application = useQuery(
+    api.applications.getApplicationByJobIdAndFreelancerId,
+    {
+      jobId,
+      applicantId: currentUser?._id as Id<"users">,
+    }
+  );
 
   const router = useRouter();
 
-  if(!job) return null;
+  if (!job) return null;
 
   return (
     <div className="relative w-full h-fit max-w-4xl mx-auto p-4 space-y-2 border-2 rounded-xl">
@@ -59,24 +62,33 @@ const JobDetails = ({ params }: JobDetailsProps) => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className={`capitalize ${statusColors[job.status] || "text-black"}`}>
+          <Link href={`/dashboard/direct/inbox/${job.hirerId}`}>
+            <Badge
+              variant="primary"
+            >
+              Message
+            </Badge>
+          </Link>
+          <Badge
+            variant="outline"
+            className={`capitalize ${statusColors[job.status] || "text-black"}`}
+          >
             {job.status === "in_progress" ? "In Progress" : job.status}
           </Badge>
-        {application ? (
-          <Button variant={"sec"} className="capitalize cursor-pointer">
-            Applied
-          </Button>
-        ) : (
-          <Link
-            href={`/dashboard/freelancer/${unWrappedParams.username}/jobs/apply/${jobId}`}
-          >
-            <Button variant={"prime"} className="capitalize cursor-pointer">
-              Apply
+          {application ? (
+            <Button variant={"sec"} className="capitalize cursor-pointer">
+              Applied
             </Button>
-          </Link>
-        )}
+          ) : (
+            <Link
+              href={`/dashboard/freelancer/${unWrappedParams.username}/jobs/apply/${jobId}`}
+            >
+              <Button variant={"prime"} className="capitalize cursor-pointer">
+                Apply
+              </Button>
+            </Link>
+          )}
         </div>
-
       </div>
 
       <Separator />

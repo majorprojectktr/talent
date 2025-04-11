@@ -44,3 +44,8 @@ export type ApplicationWithJob = Application & Partial<Job>;
 export type ImageWithUrlType = Doc<"jobMedia"> & {
   url: string
 };
+
+export type MessageWithUserType = Doc<"messages"> & {
+  user: Doc<"users">
+};
+

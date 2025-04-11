@@ -49,7 +49,7 @@ const Dashboard = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setInitialLoadComplete(true);
-    }, 3000); // Minimum 3 second loader
+    }, 5000); // Minimum 3 second loader
 
     return () => clearTimeout(timer);
   }, []);
@@ -59,6 +59,7 @@ const Dashboard = () => {
     if (!currentUser) return;
     push(`dashboard/${currentUser.role}/${currentUser.username}/jobs`);
   }, [currentUser, push]);
+
 
   if (!initialLoadComplete || currentUser === undefined) return <AuthLoader />;
 

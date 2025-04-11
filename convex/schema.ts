@@ -124,4 +124,17 @@ export default defineSchema({
   })
     .index("by_freelancerId", ["freelancerId"])
     .index("by_jobId", ["jobId"]),
+  messages: defineTable({
+    userId: v.id("users"),
+    text: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+    seen: v.boolean(),
+    conversationId: v.id("conversations"),
+  }).index("by_conversationId", ["conversationId"]),
+  conversations: defineTable({
+    participantOneId: v.id("users"),
+    participantTwoId: v.id("users"),
+  })
+    .index("by_participantOneId", ["participantOneId", "participantTwoId"])
+    .index("by_participantTwoId", ["participantTwoId", "participantOneId"]),
 });

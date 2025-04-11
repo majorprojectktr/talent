@@ -9,9 +9,10 @@ import { Id } from "@/convex/_generated/dataModel";
 import { truncateText } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { formatDate } from "date-fns";
-import { ArrowRight, ChevronsRight, CircleChevronRight } from "lucide-react";
+import { CircleChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "./ui/badge";
+import { usePathname } from "next/navigation";
 
 interface FreelancerProfileProps {
   freelancerId: string;
@@ -29,6 +30,8 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const reviewsContainerRef = useRef<HTMLDivElement | null>(null);
   const [reviewIndex, setReviewIndex] = useState<number>(0);
+
+  const pathname = usePathname();
 
   useEffect(() => {
     console.log(freelancer, "freelancer");
@@ -112,36 +115,49 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
         </div>
         <div className="w-full w-full flex-shrink-0 flex-1 grid grid-cols-1 space-y-2">
           <div className="w-full h-fit grid grid-col-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
-              <span className="text-[12px] font-semibold text-[#344CB7]">
-                Total Earnings
-              </span>
-              <span className="text-sm font-medium">$12450</span>
-            </div>
-            <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
-              <span className="text-[12px] font-semibold text-[#344CB7]">
-                This Month
-              </span>
-              <span className="text-sm font-medium">$450</span>
-            </div>
-            <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
-              <span className="text-[12px] font-semibold text-[#344CB7]">
-                Pending
-              </span>
-              <span className="text-sm font-medium">$670</span>
-            </div>
-            <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
-              <span className="text-[12px] font-semibold text-[#344CB7]">
-                Overall Rating
-              </span>
-              <span className="text-sm font-medium">5</span>
-            </div>
-            <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
-              <span className="text-[12px] font-semibold text-[#344CB7]">
-                Projects Completed
-              </span>
-              <span className="text-sm font-medium">2</span>
-            </div>
+            {pathname.includes("freelancer") ? (
+              <>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    Total Earnings
+                  </span>
+                  <span className="text-sm font-medium">$12450</span>
+                </div>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    This Month
+                  </span>
+                  <span className="text-sm font-medium">$450</span>
+                </div>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    Pending
+                  </span>
+                  <span className="text-sm font-medium">$670</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    Overall Rating
+                  </span>
+                  <span className="text-sm font-medium">5</span>
+                </div>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    Projects Completed
+                  </span>
+                  <span className="text-sm font-medium">2</span>
+                </div>
+                <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
+                  <span className="text-[12px] font-semibold text-[#344CB7]">
+                    Ranking
+                  </span>
+                  <span className="text-sm font-medium">2</span>
+                </div>
+              </>
+            )}
           </div>
           <div className="space-y-2">
             <Label className="font-normal text-md capitalize">Reviews</Label>
@@ -182,7 +198,7 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
                 onClick={handleNextReviews}
                 size={30}
                 className={`no-pointer-events absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer transition-all duration-300 ease-in-out ${
-                  reviewIndex + 1 >=  (reviews ?? []).length - 1
+                  reviewIndex + 1 >= (reviews ?? []).length - 1
                     ? "rotate-180"
                     : "rotate-0"
                 }`}

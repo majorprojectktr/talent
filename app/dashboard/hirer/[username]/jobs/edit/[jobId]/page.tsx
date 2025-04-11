@@ -13,7 +13,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -24,7 +23,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -32,19 +30,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowLeft, Loader2, Trash2 } from "lucide-react";
-import { Usable, use, useState } from "react";
+import { ArrowLeft, Trash2 } from "lucide-react";
+import { use, useEffect, useState } from "react";
 
 import { Separator } from "@/components/ui/separator";
 import { Id } from "@/convex/_generated/dataModel";
+import { pingColors, statusColors } from "@/lib/constants";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { EditJob } from "./_components/edit-job";
-import Link from "next/link";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { pingColors, statusColors } from "@/lib/constants";
 
 interface Params {
   username: string;
@@ -63,7 +58,7 @@ const Edit = ({ params }: JobProps) => {
   const deleteJob = useMutation(api.jobs.remove);
   const router = useRouter();
 
-  const [status, setStatus] = useState<string>("completed");
+  const [status, setStatus] = useState<string>("");
 
   const handleStatusChange = (newValue: string) => {
     setStatus(newValue);
@@ -87,6 +82,12 @@ const Edit = ({ params }: JobProps) => {
       router.push(`/dashboard/hirer/${unWrappedParams.username}/jobs`);
     });
   };
+
+  useEffect(() => {
+    if (job) {
+      setStatus(job.status);
+    }
+  }, [job]);
 
   return (
     <div className="w-full h-fit max-w-4xl mx-auto p-4 space-y-2 border-2 rounded-xl">
@@ -129,9 +130,8 @@ const Edit = ({ params }: JobProps) => {
             </div>
           )}
 
-          {
-            (job?.status === "open" || job?.status === "in_progress") && (
-              <Dialog>
+          {(job?.status === "open" || job?.status === "in_progress") && (
+            <Dialog>
               <DialogTrigger asChild>
                 <Button variant="prime">Update Status</Button>
               </DialogTrigger>
@@ -192,8 +192,7 @@ const Edit = ({ params }: JobProps) => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-            )
-          }
+          )}
         </div>
       </div>
       <Separator />
