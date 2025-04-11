@@ -18,10 +18,10 @@ import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 import { Separator } from "./ui/separator";
 import { SearchInput } from "./search-input";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Bookmark } from "lucide-react";
+import { Bookmark, MessageCircle } from "lucide-react";
 
 const parkinsans = Parkinsans({ subsets: ["latin"] });
 
@@ -32,10 +32,12 @@ const Appbar = () => {
   const searchParams = useSearchParams();
   const bookmarks = searchParams.get("bookmarks");
 
+  const { push } = useRouter();
+
   return (
     <>
       <nav className="flex justify-between items-center p-4 gap-4 h-12">
-        <Link href="/">
+        <Link href={`/dashboard/${currentUser?.role}/${currentUser?.username}/jobs`}>
           <Label
             title="Talent Freelance Marketplace"
             className={`${parkinsans.className} text-[#344CB7] text-xl md:text-2xl font-bold leading-tight transition-colors cursor-pointer`}
@@ -76,6 +78,13 @@ const Appbar = () => {
         )}
 
         <div className="flex items-center gap-4">
+          <MessageCircle
+            size={20}
+            className="cursor-pointer"
+            color="#344CB7"
+            fill={pathname.includes("inbox") ? "#344CB7" : "none"}
+            onClick={() => push("/dashboard/direct/inbox")}
+          />
           <DepositFund />
           <SignedOut>
             <Button variant="ghost" asChild>

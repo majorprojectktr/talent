@@ -24,12 +24,13 @@ export const JobListing = ({ jobId }: JobListingProps) => {
       <div className="w-full ">
         <Images images={job.images} title={job.title} allowDelete={false} />
       </div>
+      <Badge variant={"outline"}>
+                {`Created: ${formatDistanceToNow(job._creationTime, { addSuffix: true })}`}
+              </Badge>
       <div className="flex flex-col gap-1">
         <Label className="w-fit text-base font-medium text-black leading-tight">
           Title
-          <Badge variant={"outline"}>
-                {`Created: ${formatDistanceToNow(job._creationTime, { addSuffix: true })}`}
-              </Badge>
+   
         </Label>
         <div className="w-fit text-sm font-normal text-black leading-tight">
           {job.title}
