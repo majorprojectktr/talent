@@ -55,13 +55,32 @@ export const update = mutation({
       throw new Error("Unauthorized");
     }
 
+    const job = await ctx.db.get(args.id);
+
+    if (!job) {
+      throw new Error("Job not found");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.tokenIdentifier))
+      .unique();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user._id !== job.hirerId) {
+      throw new Error("You are not the hirer of this job");
+    }
+
     const value = args.value;
 
-    const gig = await ctx.db.patch(args.id, {
+    await ctx.db.patch(args.id, {
       [args.field]: value,
     });
 
-    return gig;
+    return job;
   },
 });
 
@@ -282,7 +301,26 @@ export const get = query({
       );
     }
 
-    return jobsWithBookmarkRelation;
+    let jobsWithBookmarkRelationAndHirer = jobsWithBookmarkRelation;
+
+    if (identity !== null) {
+      jobsWithBookmarkRelationAndHirer = await Promise.all(
+        jobsWithBookmarkRelation.map(async (job) => {
+          return ctx.db
+            .query("users")
+            .withIndex("by_id", (q) => q.eq("_id", job.hirerId))
+            .unique()
+            .then((user) => {
+              return {
+                ...job,
+                hirerName: user?.username,
+              };
+            });
+        })
+      );
+    }
+
+    return jobsWithBookmarkRelationAndHirer;
   },
 });
 

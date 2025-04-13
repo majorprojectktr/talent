@@ -71,6 +71,7 @@ export const JobsList = ({ query }: JobsListProps) => {
             status={job.status}
             hirerId={job.hirerId}
             bookmarked={job.bookmarked as boolean}
+            hirerName={job.hirerName}
           />
         );
       })}

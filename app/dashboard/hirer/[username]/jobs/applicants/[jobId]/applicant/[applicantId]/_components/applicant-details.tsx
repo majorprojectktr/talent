@@ -85,8 +85,8 @@ export const ApplicantDetails = ({ data, jobId }: ApplicantDetailsProps) => {
         <Label className="w-fit text-base font-medium text-black leading-tight">
           Proposal
           <Badge variant={"outline"}>
-                {`Submitted: ${formatDistanceToNow(data._creationTime, { addSuffix: true })}`}
-              </Badge>
+            {`Submitted: ${formatDistanceToNow(data._creationTime, { addSuffix: true })}`}
+          </Badge>
         </Label>
         <TextareaCustom
           value={data?.proposal}
@@ -174,9 +174,11 @@ export const ApplicantDetails = ({ data, jobId }: ApplicantDetailsProps) => {
         </div>
       )}
 
-      {data.job.selectedApplicationId === data._id && !review && (
-        <AddReview jobId={data.jobId} freelancerId={data.freelancerId} />
-      )}
+      {data.job.status === "completed" &&
+        data.job.selectedApplicationId === data._id &&
+        !review && (
+          <AddReview jobId={data.jobId} freelancerId={data.freelancerId} />
+        )}
     </div>
   );
 };

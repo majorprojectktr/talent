@@ -74,15 +74,6 @@ const Edit = ({ params }: JobProps) => {
     });
   };
 
-  const onDelete = () => {
-    deleteJob({
-      id: jobId,
-    }).then(() => {
-      toast.info("Job deleted!");
-      router.push(`/dashboard/hirer/${unWrappedParams.username}/jobs`);
-    });
-  };
-
   useEffect(() => {
     if (job) {
       setStatus(job.status);
@@ -151,41 +142,7 @@ const Edit = ({ params }: JobProps) => {
                   </SelectContent>
                 </Select>
                 <DialogFooter>
-                  {job?.status === "in_progress" && (
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className="capitalize cursor-pointer"
-                        >
-                          <Trash2 color="red" size={20} />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this job and all of it&apos;s related data
-                            from our servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="cursor-pointer">
-                            Cancel
-                          </AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={onDelete}
-                            className="cursor-pointer"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  )}
+                  
                   <Button variant={"prime"} onClick={onUpdate}>
                     Update
                   </Button>

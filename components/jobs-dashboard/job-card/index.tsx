@@ -19,8 +19,6 @@ import { Bookmark } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-
-
 const JobCard = ({
   createdAt,
   id,
@@ -30,26 +28,33 @@ const JobCard = ({
   status,
   requiredskills,
   bookmarked,
+  hirerId,
+  hirerName,
 }: Job) => {
   const currentUser = useQuery(api.users.getCurrentUser);
   const pathname = usePathname();
+  const freelancerUrl = `/dashboard/freelancer/${currentUser?.username}/jobs/${id}`;
+  const hirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
+  const notHirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/${id}`;
   const redirectUrl = pathname.includes("freelancer")
-    ? `/dashboard/freelancer/${currentUser?.username}/jobs/${id}`
-    : `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
+    ? freelancerUrl
+    : hirerId === currentUser?._id
+      ? hirerUrl
+      : notHirerUrl;
 
-  const { mutate: toggleBookmark, pending: toggleBookmarkPending } = useApiMutation(api.jobs.toggleBookmark);
-  
+  const { mutate: toggleBookmark, pending: toggleBookmarkPending } =
+    useApiMutation(api.jobs.toggleBookmark);
 
   return (
-    <Card className="overflow-hidden relative h-fit min-h-74 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
+    <Card className="overflow-hidden relative h-82 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
       <div className="absolute top-2 right-2">
         <Bookmark
           size={20}
           color="#344CB7"
           fill={bookmarked ? "#344CB7" : "none"}
           onClick={() => {
-            if(toggleBookmarkPending) return;
-            toggleBookmark({id});
+            if (toggleBookmarkPending) return;
+            toggleBookmark({ id });
           }}
           className="cursor-pointer"
         />
@@ -81,6 +86,10 @@ const JobCard = ({
           <span className="text-[#09122C]">
             {formatDate(createdAt, "dd/MM/yyyy")}
           </span>
+        </div>
+        <div className="text-sm text-[#344CB7] leading-tight space-x-1">
+          <span className="font-medium"> Created by:</span>
+          <span className="text-[#09122C]">{`@${hirerName}`}</span>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
