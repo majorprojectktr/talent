@@ -13,6 +13,7 @@ export interface Job {
   status: string;
   hirerId: string;
   bookmarked: boolean;
+  hirerName: string;
 }
 
 export interface Application {
