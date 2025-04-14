@@ -31,13 +31,13 @@ const FreelancerCard = ({
 
   return (
     <Link
-      href={`/dashboard/hirer/${currentUser?.username}/professionals/${id}`}
+      href={`/dashboard/hirer/${currentUser?.username || ''}/professionals/${id || ''}`}
     >
       <Card className="overflow-hidden h-fit min-h-54 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
         <CardHeader>
           <CardTitle className="text-lg leading-tight">
             <Label className="font-normal text-lg capitalize leading-tight">
-              {profession}
+              {profession || ''}
             </Label>
           </CardTitle>
           <CardDescription className="text-md leading-tight space-y-2">
@@ -51,7 +51,7 @@ const FreelancerCard = ({
                 </Avatar>
                 <div className="space-y-1">
                   <div className="flex items-center gap-x-1">
-                    <div className="capitalize text-md">{fullname}</div>
+                    <div className="capitalize text-md">{fullname || ''}</div>
 
                     <span className="relative flex size-2">
                       <span
@@ -62,12 +62,12 @@ const FreelancerCard = ({
                       ></span>
                     </span>
                   </div>
-                  <div className="capitalize text-sm leading-tight">{`@${username}`}</div>
+                  <div className="capitalize text-sm leading-tight">{`@${username || ''}`}</div>
                 </div>
               </div>
             </div>
             <div className="flex flex-wrap items-center justify-start gap-1">
-              {["react", "next", "typescript"]
+              {currentUser?.skills && currentUser.skills
                 .slice(0, 3)
                 .map((skill, index) => (
                   <div
@@ -88,7 +88,7 @@ const FreelancerCard = ({
           </div>
           <div className="text-sm text-[#344CB7] leading-tight space-x-1">
             <span className="font-medium">Role</span>
-            <span className="text-[#09122C]">{role}</span>
+            <span className="text-[#09122C]">{role || ''}</span>
           </div>
           <div className="text-sm text-[#344CB7] leading-tight space-x-1">
             <span className="font-medium"> Joined:</span>
