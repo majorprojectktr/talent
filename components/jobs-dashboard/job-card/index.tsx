@@ -35,7 +35,7 @@ const JobCard = ({
   const pathname = usePathname();
   const freelancerUrl = `/dashboard/freelancer/${currentUser?.username}/jobs/${id}`;
   const hirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
-  const notHirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/${id}`;
+  const notHirerUrl = `/dashboard/admin/${currentUser?.username}/jobs/${id}`;
   const redirectUrl = pathname.includes("freelancer")
     ? freelancerUrl
     : hirerId === currentUser?._id

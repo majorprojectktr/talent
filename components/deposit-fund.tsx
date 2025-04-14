@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { formatNumberWithCommas } from "@/lib/utils";
-import { useAction, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,8 +23,9 @@ import { useDebouncedCallback } from "use-debounce";
 export function DepositFund() {
   const currentUser = useQuery(api.users.getCurrentUser);
   const pay = useAction(api.stripe.pay);
+  const withdraw = useMutation(api.transactions.withdraw);  
   const verifyPayment = useAction(api.stripe.verifyPayment);
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -47,6 +48,21 @@ export function DepositFund() {
       toast.error(error as string);
     }
     setIsLoading(true);
+  };
+
+  const handleWithdraw = async () => {
+    if (!currentUser?.balance) return;
+    setIsLoading(true);
+    try {
+      const transaction = await withdraw({ amount: currentUser.balance });
+      toast.success("Funds withdrawn it will take a few minutes to reflect");
+      setIsLoading(false);
+      refresh();
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+      toast.error(error as string);
+    }
   };
 
   const handlePaymentVerification = useDebouncedCallback(
@@ -76,11 +92,33 @@ export function DepositFund() {
   if (!currentUser) return null;
 
   return pathname.includes("freelance") ? (
-    <Button variant="prime">
-      <span className="text-sm font-normal ">
-        Balance: {`$${formatNumberWithCommas(currentUser?.balance)}`}
-      </span>
-    </Button>
+    <Dialog>
+    <DialogTrigger asChild>
+      <Button variant="prime">
+        <span className="text-sm font-normal ">
+          Balance: {`$${formatNumberWithCommas(currentUser?.balance)}`}
+        </span>
+      </Button>
+    </DialogTrigger>
+    <DialogContent className="sm:max-w-[425px]">
+      <DialogHeader>
+        <DialogTitle>Withdrawal</DialogTitle>
+        <DialogDescription>
+          Withdraw funds from your wallet.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button
+          variant={"prime"}
+          onClick={handleWithdraw}
+          disabled={isLoading}
+        >
+          {isLoading && <Loader2 className="animate-spin" />}
+          Withdraw
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
   ) : (
     <Dialog>
       <DialogTrigger asChild>
