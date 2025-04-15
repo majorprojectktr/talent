@@ -40,9 +40,9 @@ export const store = mutation({
         profileImageUrl: identity.profileUrl,
         isActive: true,
         balance: 0,
-        experience: "",
+        experience: "No Experience",
         skills: [],
-        profession: "",
+        profession: "Profession To Be Defined",
       });
     }
 
