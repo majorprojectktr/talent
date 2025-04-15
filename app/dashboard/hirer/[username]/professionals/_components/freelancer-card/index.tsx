@@ -33,7 +33,7 @@ const FreelancerCard = ({
     <Link
       href={`/dashboard/hirer/${currentUser?.username || ''}/professionals/${id || ''}`}
     >
-      <Card className="overflow-hidden h-fit min-h-54 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
+      <Card className="overflow-hidden h-82 flex flex-col justify-between bg-[#F5F5F5]/10 shadow-md hover:translate-y-[-2px] hover:shadow-lg transition-all ease-in-out duration-200">
         <CardHeader>
           <CardTitle className="text-lg leading-tight">
             <Label className="font-normal text-lg capitalize leading-tight">
