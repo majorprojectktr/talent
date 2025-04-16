@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const deposit = internalMutation({
   args: {
@@ -124,7 +125,7 @@ export const withdraw = mutation({
       throw new Error("only freelaners can withdraw funds");
     }
 
-    if(user.balance < args.amount) {
+    if (user.balance < args.amount) {
       throw new Error("Insufficient funds");
     }
 
@@ -160,5 +161,63 @@ export const getTransactionJobId = query({
       .collect();
 
     return transactions;
+  },
+});
+
+export const getTransactionByUserId = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    // Get transactions where user is the sender
+    const sentTransactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_fromUserId", (q) => q.eq("fromUserId", args.userId))
+      .collect();
+
+    let sendTransactionsWithUser = sentTransactions;
+
+    sendTransactionsWithUser = await Promise.all(
+      sentTransactions.map(async (transaction) => {
+        const fromUser = await ctx.db.get(transaction.fromUserId);
+        let toUser = null;
+        if (transaction.type === "release") {
+          toUser = await ctx.db.get(transaction.toUserId as Id<"users">);
+        }
+        return {
+          ...transaction,
+          from: fromUser?.username,
+          to: toUser?.username,
+        };
+      })
+    );
+
+    // Get transactions where user is the recipient
+    const receivedTransactions = await ctx.db
+      .query("transactions")
+      .withIndex("by_toUserId", (q) => q.eq("toUserId", args.userId))
+      .collect();
+
+    let receivedTransactionsWithUser = receivedTransactions;
+
+    receivedTransactionsWithUser = await Promise.all(
+      receivedTransactions.map(async (transaction) => {
+        const fromUser = await ctx.db.get(transaction.fromUserId);
+        let toUser = null;
+        if (transaction.type === "release") {
+          toUser = await ctx.db.get(transaction.toUserId as Id<"users">);
+        }
+        return {
+          ...transaction,
+          from: fromUser?.username,
+          to: toUser?.username,
+        };
+      })
+    );
+
+    return [...sendTransactionsWithUser, ...receivedTransactionsWithUser];
   },
 });

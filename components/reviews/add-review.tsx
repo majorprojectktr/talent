@@ -74,7 +74,7 @@ export const AddReview = ({ jobId, freelancerId }: AddReviewProps) => {
   // Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
     // You can now use these values for mutation.
-    console.log(values, "values");
+    // console.log(values, "values");
     mutate({
       jobId,
       freelancerId,

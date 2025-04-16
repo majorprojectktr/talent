@@ -33,10 +33,10 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
 
   const pathname = usePathname();
 
-  useEffect(() => {
-    console.log(freelancer, "freelancer");
-    console.log(reviews, "reviews");
-  }, [freelancer, reviews]);
+  // useEffect(() => {
+  //   console.log(freelancer, "freelancer");
+  //   console.log(reviews, "reviews");
+  // }, [freelancer, reviews]);
 
   const averageRating = () => {
     

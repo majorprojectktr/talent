@@ -47,7 +47,7 @@ const ConversationPage = ({ params }: FormProps) => {
     );
   }
 
-  console.log(conversation);
+  // console.log(conversation);
   return (
     <div className="h-full flex flex-col">
       <Body messages={conv.messagesWithUsers} />

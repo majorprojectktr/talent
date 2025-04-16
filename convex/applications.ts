@@ -57,10 +57,6 @@ export const get = query({
       throw new Error("User not found");
     }
 
-    if (user.role !== "freelancer") {
-      throw new Error("only freelancers can create applications");
-    }
-
     const applications = await ctx.db
       .query("applications")
       .withIndex("by_freelancerId", (q) => q.eq("freelancerId", user._id))

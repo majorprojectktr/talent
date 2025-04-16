@@ -21,7 +21,7 @@ import { SearchInput } from "./search-input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Bookmark, MessageCircle } from "lucide-react";
+import { ArrowLeftRight, Bookmark, MessageCircle } from "lucide-react";
 
 const parkinsans = Parkinsans({ subsets: ["latin"] });
 
@@ -78,6 +78,13 @@ const Appbar = () => {
         )}
 
         <div className="flex items-center gap-4">
+          <ArrowLeftRight
+            size={20}
+            className="cursor-pointer"
+            color="#344CB7"
+            fill={pathname.includes("inbox") ? "#344CB7" : "none"}
+            onClick={() => push(`/dashboard/${currentUser?.role}/transactions/${currentUser?._id}`)}
+          />
           <MessageCircle
             size={20}
             className="cursor-pointer"

@@ -71,9 +71,9 @@ export const ApplicantsDashboard = ({ jobId, username }: ApplicantsDashboardProp
     [applications]
   );
 
-  useEffect(() => {
-    console.log(applications, "✅");
-  }, [applications]);
+  // useEffect(() => {
+  //   console.log(applications, "✅");
+  // }, [applications]);
 
   return (
     <Table>

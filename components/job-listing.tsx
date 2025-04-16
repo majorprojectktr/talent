@@ -62,9 +62,9 @@ export const JobListing = ({ jobId }: JobListingProps) => {
     }
   };
 
-  useEffect(() => {
-    console.log(transactions, "transactions");
-  }, [transactions]);
+  // useEffect(() => {
+  //   console.log(transactions, "transactions");
+  // }, [transactions]);
 
   if (!job) return null;
 
