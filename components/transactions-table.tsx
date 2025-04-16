@@ -59,7 +59,7 @@ export function TransactionsTable() {
 
   return (
     <Table>
-      <TableCaption>A list of your recent applications.</TableCaption>
+      <TableCaption>A list of your recent transactions.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>Type</TableHead>
