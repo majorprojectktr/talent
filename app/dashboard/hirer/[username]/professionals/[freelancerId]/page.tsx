@@ -8,6 +8,7 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { FreelancerProfile } from "@/components/freelancer-profile";
+import Link from "next/link";
 
 interface Params {
   username: string;
@@ -41,9 +42,11 @@ const ProfessionalProfile = ({ params }: JobDetailsProps) => {
           Freelancer Profile
         </div>
 
-        <Button variant={"prime"} className="capitalize cursor-pointer">
-          Portfolio
-        </Button>
+        <Link href={`/dashboard/direct/inbox/${unWrappedParams.freelancerId}`}>
+          <Button variant={"prime"} className="capitalize cursor-pointer">
+            Message
+          </Button>
+        </Link>
       </div>
 
       <Separator />
