@@ -5,8 +5,12 @@ import { TextareaCustom } from "@/components/textarea-custom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { truncateText } from "@/lib/utils";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import {
+  filterTransactionsLast30Days,
+  formatNumberWithCommas,
+  truncateText,
+} from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { formatDate } from "date-fns";
 import { CircleChevronRight } from "lucide-react";
@@ -27,20 +31,67 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
     freelancerId: userId,
   });
 
+  const overallRatings = reviews?.map((review) => {
+    const average =
+      (review.communication_level +
+        review.recommend_to_a_friend +
+        review.service_as_described) /
+      3;
+    return average;
+  });
+
+  const overallRating = overallRatings
+    ? overallRatings?.reduce((acc, rating) => acc + rating, 0) /
+      (reviews?.length || 0)
+    : 0;
+
+  const transactions = useQuery(api.transactions.getTransactionByUserId, {
+    userId,
+  });
+
+  const withdraws = transactions?.filter(
+    (transaction) => transaction.type === "withdraw"
+  );
+  const recentTransactions = withdraws
+    ? filterTransactionsLast30Days(withdraws as Doc<"transactions">[])
+    : [];
+  const totalEarnings =
+    withdraws?.reduce((acc, withdraw) => acc + withdraw.amount, 0) || 0;
+  const lastMonthEarnings =
+    recentTransactions?.reduce((acc, withdraw) => acc + withdraw.amount, 0) ||
+    0;
+  const applications = useQuery(api.applications.getApplicationByFreelancerId, {
+    freelancerId: userId,
+  });
+  const completedApplications = applications?.filter(
+    (application) => application.status === "completed"
+  );
+  const acceptedApplications = applications?.filter(
+    (application) => application.status === "accepted"
+  );
+  const pendingEarnings =
+    acceptedApplications?.reduce(
+      (acc, application) => acc + application.proposedRate,
+      0
+    ) || 0;
+
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const reviewsContainerRef = useRef<HTMLDivElement | null>(null);
   const [reviewIndex, setReviewIndex] = useState<number>(0);
 
   const pathname = usePathname();
 
+  useEffect(() => {
+    console.log(transactions, "transactions");
+    console.log(applications, "applications");
+  }, [transactions]);
+
   // useEffect(() => {
   //   console.log(freelancer, "freelancer");
   //   console.log(reviews, "reviews");
   // }, [freelancer, reviews]);
 
-  const averageRating = () => {
-    
-  }
+  const averageRating = () => {};
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((star) => {
@@ -125,19 +176,19 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Total Earnings
                   </span>
-                  <span className="text-sm font-medium">$12450</span>
+                  <span className="text-sm font-medium">{`$${formatNumberWithCommas(totalEarnings)}`}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     This Month
                   </span>
-                  <span className="text-sm font-medium">$450</span>
+                  <span className="text-sm font-medium">{`$${formatNumberWithCommas(lastMonthEarnings)}`}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Pending
                   </span>
-                  <span className="text-sm font-medium">$670</span>
+                  <span className="text-sm font-medium">{`$${formatNumberWithCommas(pendingEarnings)}`}</span>
                 </div>
               </>
             ) : (
@@ -146,19 +197,23 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Overall Rating
                   </span>
-                  <span className="text-sm font-medium">5</span>
+                  <span className="text-sm font-medium">{overallRating}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Projects Completed
                   </span>
-                  <span className="text-sm font-medium">2</span>
+                  <span className="text-sm font-medium">
+                    {completedApplications?.length}
+                  </span>
                 </div>
                 <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Ranking
                   </span>
-                  <span className="text-sm font-medium">2</span>
+                  <span className="text-sm font-medium">
+                    {Math.floor(Math.random() * 10) + 1}
+                  </span>
                 </div>
               </>
             )}

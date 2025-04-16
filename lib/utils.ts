@@ -77,3 +77,12 @@ export function formatNumberWithCommas(number: number): string {
 export const truncateText = (text: string, maxLength: number = 50) => {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 };
+
+export function filterTransactionsLast30Days(transactions: Doc<"transactions">[]) {
+  // Calculate timestamp for 30 days ago (30 days * 24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
+  const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  
+  // Filter transactions where _creationTime is greater than thirtyDaysAgo
+  return transactions.filter(transaction => transaction._creationTime > thirtyDaysAgo);
+}
+
