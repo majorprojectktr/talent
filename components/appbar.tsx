@@ -92,7 +92,10 @@ const Appbar = () => {
             fill={pathname.includes("inbox") ? "#344CB7" : "none"}
             onClick={() => push("/dashboard/direct/inbox")}
           />
-          <DepositFund />
+          {
+            currentUser?.role !== "admin" &&
+            <DepositFund />
+          }
           <SignedOut>
             <Button variant="ghost" asChild>
               <SignInButton mode="modal" />
