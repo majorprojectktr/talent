@@ -32,9 +32,9 @@ export function TransactionsTable() {
     userId: currentUser?._id as Id<"users">,
   }) as any;
 
-  useEffect(() => {
-    console.log(transactions, "✅");
-  }, [transactions]);
+//   useEffect(() => {
+//     console.log(transactions, "✅");
+//   }, [transactions]);
 
   const items = useMemo(
     () =>

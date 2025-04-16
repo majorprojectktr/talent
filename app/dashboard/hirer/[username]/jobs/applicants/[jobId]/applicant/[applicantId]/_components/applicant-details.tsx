@@ -28,10 +28,10 @@ export const ApplicantDetails = ({ data, jobId }: ApplicantDetailsProps) => {
 
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
-  useEffect(() => {
-    console.log(data, "application details");
-    console.log(review, "review");
-  }, [data, review]);
+  // useEffect(() => {
+  //   console.log(data, "application details");
+  //   console.log(review, "review");
+  // }, [data, review]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((star) => {

@@ -9,11 +9,11 @@ export const FreelancersList = () => {
     role: "freelancer",
   });
 
-  useEffect(() => {
-    if (freelancers) {
-      console.log(freelancers, "✅");
-    }
-  }, [freelancers]);
+  // useEffect(() => {
+  //   if (freelancers) {
+  //     console.log(freelancers, "✅");
+  //   }
+  // }, [freelancers]);
 
   if (!freelancers) {
     return <div>Loading...</div>;

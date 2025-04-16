@@ -21,9 +21,9 @@ export const JobsList = ({ query }: JobsListProps) => {
 
   const [bookmarkedJobs, setBookmarkedJobs] = useState<Job[]>([]);
 
-  useEffect(() => {
-    console.log("JobsList", jobs);
-  }, [jobs]);
+  // useEffect(() => {
+  //   console.log("JobsList", jobs);
+  // }, [jobs]);
 
   // filter for bookmarks if query.bookmarks is true
   useEffect(() => {
