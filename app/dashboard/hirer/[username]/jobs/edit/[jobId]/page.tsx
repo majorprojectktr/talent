@@ -55,6 +55,7 @@ const Edit = ({ params }: JobProps) => {
   const jobId = unWrappedParams.jobId as Id<"jobs">;
   const job = useQuery(api.jobs.getJobsById, { jobId });
   const updateJob = useMutation(api.jobs.update);
+  const updateApplication = useMutation(api.applications.updateApplication);
   const deleteJob = useMutation(api.jobs.remove);
   const router = useRouter();
 
@@ -69,9 +70,23 @@ const Edit = ({ params }: JobProps) => {
       id: jobId,
       field: "status",
       value: status,
-    }).then(() => {
-      toast.info("Job updated!");
-    });
+    })
+      .then(() => {
+        if (status === "completed") {
+          updateApplication({
+            applicationId: job?.selectedApplicationId as Id<"applications">,
+            status: "completed",
+          });
+        } else if (status === "cancelled") {
+          updateApplication({
+            applicationId: job?.selectedApplicationId as Id<"applications">,
+            status: "rejected",
+          });
+        }
+      })
+      .then(() => {
+        toast.info("Job updated!");
+      });
   };
 
   useEffect(() => {
@@ -142,7 +157,6 @@ const Edit = ({ params }: JobProps) => {
                   </SelectContent>
                 </Select>
                 <DialogFooter>
-                  
                   <Button variant={"prime"} onClick={onUpdate}>
                     Update
                   </Button>

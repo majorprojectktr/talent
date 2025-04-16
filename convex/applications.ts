@@ -57,6 +57,7 @@ export const get = query({
       throw new Error("User not found");
     }
 
+
     const applications = await ctx.db
       .query("applications")
       .withIndex("by_freelancerId", (q) => q.eq("freelancerId", user._id))
@@ -73,6 +74,25 @@ export const get = query({
     );
 
     return jobsWithApplications;
+  },
+});
+
+export const getApplicationByFreelancerId = query({
+  args: {
+    freelancerId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized");
+    }
+
+    const applications = await ctx.db.query("applications")
+      .withIndex("by_freelancerId", (q) => q.eq("freelancerId", args.freelancerId))
+      .collect();
+
+
+    return applications;
   },
 });
 
