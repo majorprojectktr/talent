@@ -91,7 +91,7 @@ export default defineSchema({
       v.literal("deposit"),
       v.literal("escrow"),
       v.literal("release"),
-      v.literal("withdraw"),
+      v.literal("withdraw")
     ), // "deposit", "escrow", "release", "withdraw"
     amount: v.number(),
     status: v.union(
