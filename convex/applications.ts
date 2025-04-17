@@ -106,10 +106,10 @@ export const getApplicationById = query({
       throw new Error("Unauthorized");
     }
 
-    if (!args.applicationId) {
+    if (!args.applicationId || args.applicationId === "placeholder_id") {
       return null;
     }
-    
+
     const application = await ctx.db.get(args.applicationId);
 
     if (!application) {

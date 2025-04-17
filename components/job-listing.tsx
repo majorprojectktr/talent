@@ -33,7 +33,7 @@ export const JobListing = ({ jobId }: JobListingProps) => {
   const currentUser = useQuery(api.users.getCurrentUser);
   const job = useQuery(api.jobs.getJobsById, { jobId: id });
   const selectedApplication = useQuery(api.applications.getApplicationById, {
-    applicationId: job?.selectedApplicationId as Id<"applications">,
+    applicationId: job?.selectedApplicationId || "placeholder_id" as Id<"applications">,
   });
   const transactions = useQuery(api.transactions.getTransactionJobId, {
     jobId: id,
