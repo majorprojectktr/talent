@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -98,7 +99,7 @@ export const getApplicationByFreelancerId = query({
 
 export const getApplicationById = query({
   args: {
-    applicationId: v.id("applications"),
+    applicationId: v.union(v.id("applications"), v.string()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -110,7 +111,7 @@ export const getApplicationById = query({
       return null;
     }
 
-    const application = await ctx.db.get(args.applicationId);
+    const application = await ctx.db.get(args.applicationId as Id<"applications">);
 
     if (!application) {
       return null;
