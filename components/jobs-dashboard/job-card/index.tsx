@@ -34,13 +34,17 @@ const JobCard = ({
   const currentUser = useQuery(api.users.getCurrentUser);
   const pathname = usePathname();
   const freelancerUrl = `/dashboard/freelancer/${currentUser?.username}/jobs/${id}`;
-  const hirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
-  const notHirerUrl = `/dashboard/admin/${currentUser?.username}/jobs/${id}`;
+  const hirerUrl = `/dashboard/hirer/${currentUser?.username}/jobs/${id}`;
+  const hirerEditUrl = `/dashboard/hirer/${currentUser?.username}/jobs/edit/${id}`;
+  const adminUrl = `/dashboard/admin/${currentUser?.username}/jobs/${id}`;
+  
   const redirectUrl = pathname.includes("freelancer")
     ? freelancerUrl
-    : hirerId === currentUser?._id
-      ? hirerUrl
-      : notHirerUrl;
+    : pathname.includes("admin")
+      ? adminUrl
+      : hirerId === currentUser?._id
+        ? hirerEditUrl
+        : hirerUrl;
 
   const { mutate: toggleBookmark, pending: toggleBookmarkPending } =
     useApiMutation(api.jobs.toggleBookmark);

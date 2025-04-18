@@ -91,8 +91,6 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
   //   console.log(reviews, "reviews");
   // }, [freelancer, reviews]);
 
-  const averageRating = () => {};
-
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((star) => {
       return (
@@ -197,7 +195,7 @@ export const FreelancerProfile = ({ freelancerId }: FreelancerProfileProps) => {
                   <span className="text-[12px] font-semibold text-[#344CB7]">
                     Overall Rating
                   </span>
-                  <span className="text-sm font-medium">{overallRating}</span>
+                  <span className="text-sm font-medium">{isNaN(overallRating) ? "N/A" : overallRating}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center h-fit border p-1 bg-[#C4D9FF]/20 rounded-sm">
                   <span className="text-[12px] font-semibold text-[#344CB7]">
