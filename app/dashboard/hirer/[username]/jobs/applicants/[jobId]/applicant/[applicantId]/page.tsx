@@ -36,7 +36,8 @@ const Applicant = ({ params }: ApplicantsProps) => {
   const unWrappedParams = use(params);
   const idAppliant = unWrappedParams.applicantId as Id<"users">;
   const idJob = unWrappedParams.jobId as Id<"jobs">;
-  const applicant = useQuery(
+  const job = useQuery(api.jobs.getJobsById, { jobId: idJob });
+  const application = useQuery(
     api.applications.getApplicationByJobIdAndFreelancerId,
     { jobId: idJob, applicantId: idAppliant }
   );
@@ -46,8 +47,9 @@ const Applicant = ({ params }: ApplicantsProps) => {
 
   const onAccept = () => {
     updateApplication({
-      applicationId: applicant?._id,
+      applicationId: application?._id,
       status: "accepted",
+      proposedRate: job?.budget as number
     }).then(() => {
       toast.info("Application accepted!");
       // router.push(`/dashboard/hirer/${unWrappedParams.username}/jobs`);
@@ -56,7 +58,7 @@ const Applicant = ({ params }: ApplicantsProps) => {
 
   const onReject = () => {
     updateApplication({
-      applicationId: applicant?._id,
+      applicationId: application?._id,
       status: "rejected",
     }).then(() => {
       toast.info("Application rejected!");
@@ -79,14 +81,14 @@ const Applicant = ({ params }: ApplicantsProps) => {
         </div>
 
         <div className="flex items-center gap-3">
-          {applicant?.status === "accepted" && (
+          {application?.status === "accepted" && (
             <Badge variant={"outline"}>Accepted</Badge>
           )}
-          {applicant?.status === "rejected" && (
+          {application?.status === "rejected" && (
             <Badge variant={"destructive"}>Rejected</Badge>
           )}
 
-          {applicant?.status === "pending" && (
+          {application?.status === "pending" && (
             <>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -151,7 +153,7 @@ const Applicant = ({ params }: ApplicantsProps) => {
         </div>
       </div>
       <Separator />
-      <ApplicantDetails data={applicant} jobId={unWrappedParams.jobId} />
+      <ApplicantDetails data={application} jobId={unWrappedParams.jobId} />
     </div>
   );
 };

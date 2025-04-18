@@ -58,7 +58,6 @@ export const get = query({
       throw new Error("User not found");
     }
 
-
     const applications = await ctx.db
       .query("applications")
       .withIndex("by_freelancerId", (q) => q.eq("freelancerId", user._id))
@@ -88,10 +87,12 @@ export const getApplicationByFreelancerId = query({
       throw new Error("Unauthorized");
     }
 
-    const applications = await ctx.db.query("applications")
-      .withIndex("by_freelancerId", (q) => q.eq("freelancerId", args.freelancerId))
+    const applications = await ctx.db
+      .query("applications")
+      .withIndex("by_freelancerId", (q) =>
+        q.eq("freelancerId", args.freelancerId)
+      )
       .collect();
-
 
     return applications;
   },
@@ -111,7 +112,9 @@ export const getApplicationById = query({
       return null;
     }
 
-    const application = await ctx.db.get(args.applicationId as Id<"applications">);
+    const application = await ctx.db.get(
+      args.applicationId as Id<"applications">
+    );
 
     if (!application) {
       return null;
@@ -169,7 +172,7 @@ export const getApplicationsByJobId = query({
         return {
           ...application,
           applicant: { ...applicant, resumeUrl: url },
-          job
+          job,
         };
       })
     );
@@ -225,7 +228,7 @@ export const getApplicationByJobIdAndFreelancerId = query({
     return {
       ...application,
       user: { ...user, resumeUrl: url },
-      job
+      job,
     };
   },
 });
@@ -239,6 +242,7 @@ export const updateApplication = mutation({
       v.literal("rejected"),
       v.literal("completed")
     ), // "open", "in_progress", "completed", "cancelled"
+    proposedRate: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -269,6 +273,12 @@ export const updateApplication = mutation({
 
     if (!job) {
       throw new Error("Job not found");
+    }
+
+    if (args.proposedRate) {
+      await ctx.db.patch(args.applicationId, {
+        proposedRate: args.proposedRate,
+      });
     }
 
     await ctx.db.patch(args.applicationId, {

@@ -9,8 +9,9 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { JobListing } from "../../../../../../components/job-listing";
+import path from "path";
 
 const statusColors: Record<string, string> = {
   open: "text-[#27548A]",
@@ -43,6 +44,7 @@ const JobDetails = ({ params }: JobDetailsProps) => {
   );
 
   const router = useRouter();
+  const pathname = usePathname();
 
   if (!job) return null;
 
@@ -77,7 +79,7 @@ const JobDetails = ({ params }: JobDetailsProps) => {
               Applied
             </Button>
           ) : (
-            job.status === "open" && (
+            job.status === "open" && pathname.includes("freelancer") && (
               <Link
                 href={`/dashboard/freelancer/${unWrappedParams.username}/jobs/apply/${jobId}`}
               >
