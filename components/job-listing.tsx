@@ -71,7 +71,7 @@ export const JobListing = ({ jobId }: JobListingProps) => {
   return (
     <div className="w-full h-fit p-4 space-y-4 p-4">
       <div className="w-full h-12 flex items-center justify-end">
-        {job.status === "completed" && !release && (
+        {job.status === "completed" && !release && currentUser?.role === "admin" && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
